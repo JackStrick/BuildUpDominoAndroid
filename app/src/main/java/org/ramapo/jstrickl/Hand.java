@@ -1,7 +1,8 @@
 package org.ramapo.jstrickl;
+import java.io.Serializable;
 import java.util.Vector;
 
-public class Hand {
+public class Hand implements Serializable {
 
 	// Data Member
 	// Player Objects Personal Hand

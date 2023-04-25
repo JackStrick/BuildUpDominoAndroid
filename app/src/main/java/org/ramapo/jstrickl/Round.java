@@ -3,215 +3,273 @@ package org.ramapo.jstrickl;
 import java.io.FileWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.Vector;
 import java.util.Scanner;
 
 
 
-public class Round {
+public class Round implements Serializable {
 
 	//Private Class Objects
-		private Human m_human = new Human();
-		private Computer m_computer = new Computer();
-		private Deck m_deck = new Deck();
-		private GameBoard m_gameBoard = new GameBoard();
-		private MessageOutput m_msg = new MessageOutput();
+	private Human m_human = new Human();
+	private Computer m_computer = new Computer();
+	private Deck m_deck = new Deck();
+	private GameBoard m_gameBoard = new GameBoard();
+	private MessageOutput m_msg = new MessageOutput();
+
+
+	//Data Members
+	private short m_handCount;
+	private short m_roundCount;
+
+
+	public Vector<Tile> GetGameStacks()
+	{
+		return m_gameBoard.GetDominoStack();
+	}
+	public Vector<Tile> GetHumanHand()
+	{
+		return m_human.GetHand();
+	}
+	public Vector<Tile> GetHumanBY() { return m_human.GetBoneYard(); }
+	public Vector<Tile> GetComputerHand() { return m_computer.GetHand(); }
+	public Vector<Tile> GetComputerBY() { return m_computer.GetBoneYard(); }
+
+	public short GetHandCount() { return m_handCount; }
+
+	public Player GetPlayerTurn() {
+		if (m_computer.IsMyTurn()){
+			return m_computer;
+		}
+		else {
+			return m_human;
+		}
+	}
+
+
 		
+	/* *********************************************************************
+	Function Name: GetHumanPoints
+	Purpose: To get the total human points after a round
+	Parameters: None
+	Return Value: The total human points after a round
+	Algorithm:
+				1) Calls Player::GetPoints
+				2) Returns value
+	Assistance Received: none
+	********************************************************************* */
+	public short GetHumanPoints()
+	{
+		return m_human.GetPoints();
+	}
 
-		//Data Members
-		private short m_handCount;
-		private short m_roundCount;
-		
-	
-		
-		
-		
-		/* *********************************************************************
-		Function Name: GetHumanPoints
-		Purpose: To get the total human points after a round
-		Parameters: None
-		Return Value: The total human points after a round
-		Algorithm:
-					1) Calls Player::GetPoints
-					2) Returns value
-		Assistance Received: none
-		********************************************************************* */
-		public short GetHumanPoints()
+	/* *********************************************************************
+	Function Name: GetComputerPoints
+	Purpose: To get the total computer points after a round
+	Parameters: None
+	Return Value: The total computer points after a round
+	Algorithm:
+				1) Calls Player::GetPoints
+				2) Returns value
+	Assistance Received: none
+	********************************************************************* */
+	public short GetComputerPoints()
+	{
+		return m_computer.GetPoints();
+	}
+
+	/* *********************************************************************
+	Function Name: GetHumanRoundsWon
+	Purpose: To get the total rounds human won after a tournament
+	Parameters: None
+	Return Value: The total human rounds won after a round
+	Algorithm:
+				1) Calls Player::GetRoundsWon
+				2) Returns round quantity
+	Assistance Received: none
+	********************************************************************* */
+	public short GetRoundsHumanWon()
+	{
+		return m_human.GetRoundsWon();
+	}
+
+
+	/* *********************************************************************
+	Function Name: GetComputerRoundsWon
+	Purpose: To get the total rounds computer won after a tournament
+	Parameters: None
+	Return Value: The total computer rounds won after a round
+	Algorithm:
+				1) Calls Player::GetRoundsWon
+				2) Returns round quantity
+	Assistance Received: none
+	********************************************************************* */
+	public short GetRoundsComputerWon()
+	{
+		return m_computer.GetRoundsWon();
+	}
+
+	//Mutators
+	/* *********************************************************************
+	Function Name: SetPlayerTurn
+	Purpose: To set whose turn it is
+	Parameters:
+				a_player, an object of player type, either computer or human
+	Return Value: None
+	Algorithm:
+				1) Calls Player::SetTurn() to set player turn value to true
+	Assistance Received: none
+	********************************************************************* */
+	public void SetPlayerTurn(Player a_player)
+	{
+		a_player.SetTurn();
+	}
+
+	/* *********************************************************************
+	Function Name: SwitchTurn
+	Purpose: To switch turns to next player up
+	Parameters: None
+	Return Value: None
+	Algorithm:
+				1) Checks if its the computers turn
+					a) If yes, make it the humans turn
+					b) Call Player::EndTurn() which sets its turn to false
+				2) If no, checks if its the humans turn
+					a) If yes, make it the computers turn
+					b) Call Player::EndTurn() which sets humans turn to false
+	Assistance Received: none
+	********************************************************************* */
+	public void SwitchTurn()
+	{
+		if (m_computer.IsMyTurn())
 		{
-			return m_human.GetPoints();
+			SetPlayerTurn(m_human);
+			m_computer.EndTurn();
 		}
-
-		/* *********************************************************************
-		Function Name: GetComputerPoints
-		Purpose: To get the total computer points after a round
-		Parameters: None
-		Return Value: The total computer points after a round
-		Algorithm: 
-					1) Calls Player::GetPoints
-					2) Returns value
-		Assistance Received: none
-		********************************************************************* */
-		public short GetComputerPoints()
+		else if (m_human.IsMyTurn())
 		{
-			return m_computer.GetPoints();
+			SetPlayerTurn(m_computer);
+			m_human.EndTurn();
 		}
+	}
 
-		/* *********************************************************************
-		Function Name: GetHumanRoundsWon
-		Purpose: To get the total rounds human won after a tournament
-		Parameters: None
-		Return Value: The total human rounds won after a round
-		Algorithm:
-					1) Calls Player::GetRoundsWon
-					2) Returns round quantity
-		Assistance Received: none
-		********************************************************************* */
-		public short GetRoundsHumanWon()
+	/* *********************************************************************
+	Function Name: UpdatePoints
+	Purpose: Updates each players point total
+	Parameters: None
+	Return Value: None
+	Algorithm:
+				1) Loops through entire gameboard
+					a) If the tile on top of stack belongs to the
+						human (B), add total pips of that tile to
+						human points
+					b) If the tile on top of stack belongs to the
+						computer (W), add total pips of that tile to
+						computer points
+				2) Calls Player::Drop Points to decrease the total tile
+					values left in player hand
+	Assistance Received: none
+	********************************************************************* */
+	public void UpdatePoints()
+	{
+		// Go through entire gameboard and give points to each player
+		Vector<Tile> board = m_gameBoard.GetDominoStack();
+		for (int i = 0; i < board.size(); i++)
 		{
-			return m_human.GetRoundsWon();
-		}
-
-
-		/* *********************************************************************
-		Function Name: GetComputerRoundsWon
-		Purpose: To get the total rounds computer won after a tournament
-		Parameters: None
-		Return Value: The total computer rounds won after a round
-		Algorithm:
-					1) Calls Player::GetRoundsWon
-					2) Returns round quantity
-		Assistance Received: none
-		********************************************************************* */
-		public short GetRoundsComputerWon()
-		{
-			return m_computer.GetRoundsWon();
-		}
-
-
-		//Mutators
-		/* *********************************************************************
-		Function Name: SetPlayerTurn
-		Purpose: To set whose turn it is
-		Parameters: 
-					a_player, an object of player type, either computer or human
-		Return Value: None
-		Algorithm:
-					1) Calls Player::SetTurn() to set player turn value to true
-		Assistance Received: none
-		********************************************************************* */
-		public void SetPlayerTurn(Player a_player)
-		{
-			a_player.SetTurn();
-		}
-
-		/* *********************************************************************
-		Function Name: SwitchTurn
-		Purpose: To switch turns to next player up
-		Parameters: None
-		Return Value: None
-		Algorithm:
-					1) Checks if its the computers turn
-						a) If yes, make it the humans turn
-						b) Call Player::EndTurn() which sets its turn to false
-					2) If no, checks if its the humans turn
-						a) If yes, make it the computers turn
-						b) Call Player::EndTurn() which sets humans turn to false
-		Assistance Received: none
-		********************************************************************* */
-		public void SwitchTurn()
-		{
-			if (m_computer.IsMyTurn())
+			if (board.get(i).getColor() == 'W')
 			{
-				SetPlayerTurn(m_human);
-				m_computer.EndTurn();
+				m_computer.SetPoints(board.get(i).getTotalPips());
 			}
-			else if (m_human.IsMyTurn())
+			else if (board.get(i).getColor() == 'B')
 			{
-				SetPlayerTurn(m_computer);
-				m_human.EndTurn();
+				m_human.SetPoints(board.get(i).getTotalPips());
 			}
 		}
+		// If Tiles left in Hand - Decrease Points And Removes Tiles From Hand
+		m_human.DropPoints();
+		m_computer.DropPoints();
+	}
 
-		/* *********************************************************************
-		Function Name: UpdatePoints
-		Purpose: Updates each players point total
-		Parameters: None
-		Return Value: None
-		Algorithm:
-					1) Loops through entire gameboard
-						a) If the tile on top of stack belongs to the
-							human (B), add total pips of that tile to
-							human points
-						b) If the tile on top of stack belongs to the
-							computer (W), add total pips of that tile to
-							computer points 
-					2) Calls Player::Drop Points to decrease the total tile
-						values left in player hand
-		Assistance Received: none
-		********************************************************************* */
-		public void UpdatePoints()
+	/* *********************************************************************
+	Function Name: ResetPoints
+	Purpose: Sets points back to zero
+	Parameters: None
+	Return Value: None
+	Algorithm:
+				1) Calls Player::PointReset for each player to
+					set the points back to zero after a round
+	Assistance Received: none
+	********************************************************************* */
+	public void ResetPoints()
+	{
+		m_human.PointReset();
+		m_computer.PointReset();
+	}
+
+	/* *********************************************************************
+	Function Name: RoundWin
+	Purpose: Increments users total rounds won based on who won the round
+	Parameters: None
+	Return Value: None
+	Algorithm:
+				1) Check whose points are greater from current round
+					a) If human, human wins round
+					b) If computer, computer wins round
+					c) If neither, its a tie
+	Assistance Received: none
+	********************************************************************* */
+	public void RoundWin()
+	{
+		if (GetHumanPoints() > GetComputerPoints())
 		{
-			// Go through entire gameboard and give points to each player
-			Vector<Tile> board = m_gameBoard.GetDominoStack();
-			for (int i = 0; i < board.size(); i++)
-			{
-				if (board.get(i).getColor() == 'W')
-				{
-					m_computer.SetPoints(board.get(i).getTotalPips());
-				}
-				else if (board.get(i).getColor() == 'B')
-				{
-					m_human.SetPoints(board.get(i).getTotalPips());
-				}
-			}
-			// If Tiles left in Hand - Decrease Points And Removes Tiles From Hand
-			m_human.DropPoints();
-			m_computer.DropPoints();
+			m_human.WonRound();
 		}
-
-		/* *********************************************************************
-		Function Name: ResetPoints
-		Purpose: Sets points back to zero
-		Parameters: None
-		Return Value: None
-		Algorithm:
-					1) Calls Player::PointReset for each player to
-						set the points back to zero after a round
-		Assistance Received: none
-		********************************************************************* */
-		public void ResetPoints()
+		else if (GetHumanPoints() < GetComputerPoints())
 		{
-			m_human.PointReset();
-			m_computer.PointReset();
+			m_computer.WonRound();
 		}
 
-		/* *********************************************************************
-		Function Name: RoundWin
-		Purpose: Increments users total rounds won based on who won the round
-		Parameters: None
-		Return Value: None
-		Algorithm:
-					1) Check whose points are greater from current round
-						a) If human, human wins round
-						b) If computer, computer wins round
-						c) If neither, its a tie
-		Assistance Received: none
-		********************************************************************* */
-		public void RoundWin()
+	}
+
+
+
+
+	//Utility Functions
+	public boolean CheckValidity(int handTile, int stackTile, Player player){
+		boolean valid = player.Play(m_gameBoard.GetDominoStack().get(stackTile), player.GetHand().get(handTile));
+		if (valid) {
+			m_gameBoard.TilePlacement(player.GetHand().get(handTile), stackTile);
+			player.RemoveTileFromHand(handTile);
+		}
+
+		return valid;
+	}
+
+	public String DetermineFirst(){
+		int first = 0;
+		System.out.print("\n\nStarting New Hand.....");
+		int repeat = 3;
+		do
 		{
-			if (GetHumanPoints() > GetComputerPoints())
+			System.out.print("\n\nBoth Players Drawing First Tile Of Hand");
+			// TileCompare - Compares the two tiles and sets player turn
+			first = TileCompare(m_human.InitialTile(), m_computer.InitialTile());
+			if (first == repeat)
 			{
-				m_human.WonRound();
+				System.out.print("\nTile Values The Same\nTiles added back to players boneyard\n\nPlayers Redrawing Tiles...");
+				m_human.ReturnTiles();
+				m_computer.ReturnTiles();
 			}
-			else if (GetHumanPoints() < GetComputerPoints())
-			{
-				m_computer.WonRound();
-			}
-
-		}
+		} while (first == repeat);
 
 
-		//Utility Functions
+		String whoIsFirst = m_msg.FirstUp(first, m_human.FirstTilePipTotal(), m_computer.FirstTilePipTotal());
+		m_human.AddToHand(m_human.Draw());
+		m_computer.AddToHand(m_computer.Draw());
+		return whoIsFirst;
+	}
+
 		/* *********************************************************************
 		Function Name: StartRound
 		Purpose: Called by tournament to begin a round
@@ -250,55 +308,19 @@ public class Round {
 							b) Update who won the round
 		Assistance Received: none
 		********************************************************************* */
-		public void StartRound(int a_choice)
+		public void StartRound()
 		{
-			//Initializing For Data For New Game
-			if (a_choice == 1)
+			//while (m_handCount < 4)
 			{
-				StartNew();
-			}
-			
-			if (a_choice == 2)
-			{
-				StartFromFile();
-			}
+				//DetermineFirst();
 
-			m_gameBoard.DisplayGameBoard();
-			System.out.print("\n\n\t\t\tBuild Up");
-			System.out.print("\n______________________________________________________________\n");
-			
-			while (m_handCount < 4)
-			{
-				int first;
-				if ((m_computer.GetHand().isEmpty() && m_human.GetHand().isEmpty()) && !m_computer.GetBoneYard().isEmpty() && !m_human.GetBoneYard().isEmpty())
-				{
-					first = 0;
-					System.out.print("\n\nStarting New Hand.....");
-					int repeat = 3;
-					do
-					{
-						System.out.print("\n\nBoth Players Drawing First Tile Of Hand");
-						first = TileCompare(m_human.InitialTile(), m_computer.InitialTile());
-						if (first == repeat)
-						{
-							System.out.print("\nTile Values The Same\nTiles added back to players boneyard\n\nPlayers Redrawing Tiles...");
-							m_human.ReturnTiles();
-							m_computer.ReturnTiles();
-						}
-					} while (first == repeat);
-
-					m_msg.FirstUp(first, m_human.FirstTilePipTotal(), m_computer.FirstTilePipTotal());
-					m_human.AddToHand(m_human.Draw());
-					m_computer.AddToHand(m_computer.Draw());
-				}
-
-				while (IsPlaceableTiles(m_computer.GetHand()) || IsPlaceableTiles(m_human.GetHand()))
+				//while (IsPlaceableTiles(m_computer.GetHand()) || IsPlaceableTiles(m_human.GetHand()))
 				{
 
 					//HUMAN TURN
 					if (m_human.IsMyTurn())
 					{
-						m_gameBoard.DisplayGameBoard();
+						//m_gameBoard.DisplayGameBoard();
 						Vector<Integer> tile_loc = m_human.Choice(m_gameBoard.GetDominoStack());
 
 						
@@ -323,7 +345,7 @@ public class Round {
 					//COMPUTER TURN
 					else if (m_computer.IsMyTurn())
 					{
-						m_gameBoard.DisplayGameBoard();
+						//m_gameBoard.DisplayGameBoard();
 						Vector<Integer> tile_loc = m_computer.Choice(m_gameBoard.GetDominoStack());
 						if (tile_loc.size() > 1)
 						{
@@ -345,6 +367,7 @@ public class Round {
 				m_msg.DisplayScore(m_human.GetPoints(), m_computer.GetPoints());
 				m_handCount++;	
 			}
+
 			m_gameBoard.DisplayGameBoard();
 			m_gameBoard.ClearBoard();
 			RoundWin();

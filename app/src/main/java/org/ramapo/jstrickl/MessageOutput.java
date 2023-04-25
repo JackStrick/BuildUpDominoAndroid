@@ -1,8 +1,9 @@
 package org.ramapo.jstrickl;
+import java.io.Serializable;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class MessageOutput {
+public class MessageOutput implements Serializable {
 	
 
 	/* *********************************************************************
@@ -123,11 +124,11 @@ public class MessageOutput {
 	********************************************************************* */
 	public boolean EndGame()
 	{
-		Scanner userIn = new Scanner(System.in);
-		int quit;
+		//Scanner userIn = new Scanner(System.in);
+		int quit = 1;
 		System.out.print("\n\nWould you like to save and quit?\nPress 1 to Continue Playing or 0 to Save and Quit\n");
 		//userIn.nextLine();
-		quit = Integer.parseInt(userIn.nextLine());
+		//quit = Integer.parseInt(userIn.nextLine());
 		
 
 		if (quit == 0)
@@ -136,7 +137,7 @@ public class MessageOutput {
 		}
 		else
 		{
-			userIn.close();
+			//userIn.close();
 			return false;
 		}
 	}
@@ -182,23 +183,24 @@ public class MessageOutput {
 					if 2, the computers tile was larger
 				a_humanTotal, the total pips of the humans tile
 				a_computerTotal, the total pips of the computer tile
-	Return Value: None
+	Return Value: String - Message for Dialog Box to inform who is first
 	Algorithm: None
 	Assistance Received: None
 	********************************************************************* */
-	public void FirstUp(int a_first, int a_humanTotal, int a_computerTotal)
+	public String FirstUp(int a_first, int a_humanTotal, int a_computerTotal)
 	{
-		System.out.print("\nYour tile value was " + a_humanTotal);
-		System.out.print("\nThe Computer's tile value was " + a_computerTotal);
+		String firstUp = "\nYour tile value was " + Integer.toString(a_humanTotal) +
+				"\nThe Computer's tile value was " + Integer.toString(a_computerTotal);
 		if (a_first == 1)
 		{
-			System.out.print("\nYour tile value was larger so you'll go first!");
+			firstUp += "\nYour tile value was larger so you'll go first!";
 		}
 		else if (a_first == 2)
 		{
-			System.out.print("\nThe computer tile value was larger so the computer will go first!");
+			firstUp += "\nThe computer tile value was larger so the computer will go first!";
 		}
-		System.out.print("\n\nBoth Players Drawing the rest of their hand...");
+
+		return firstUp;
 	}
 
 	/* *********************************************************************

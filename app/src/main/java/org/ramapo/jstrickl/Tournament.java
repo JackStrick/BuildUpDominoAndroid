@@ -40,7 +40,7 @@ public class Tournament {
 	            m_msg.GameSetup();
 	        }
 	       
-	        m_round.StartRound(a_choice);
+	        m_round.StartRound();
 	        ScoreGame();
 	        m_round.ResetPoints();
 	        m_numRounds++;
@@ -51,7 +51,15 @@ public class Tournament {
 	    EndGame();
 	}
 	
-	
+	public Round getRound()
+	{
+		return m_round;
+	}
+
+	public void SetRounds(int count)
+	{
+		m_numRounds = count;
+	}
 	
 	/* *********************************************************************
 	Function Name:  ContinuePlaying

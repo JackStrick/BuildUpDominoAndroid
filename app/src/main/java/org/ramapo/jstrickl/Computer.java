@@ -1,5 +1,6 @@
 package org.ramapo.jstrickl;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 public class Computer extends Player{

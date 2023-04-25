@@ -1,9 +1,10 @@
 package org.ramapo.jstrickl;
+import java.io.Serializable;
 import java.util.Vector;
 import java.util.Collections;
 import java.util.Random;
 
-public class Player {
+public class Player implements Serializable {
 	
 	// Player's Individual Hand
 	private Hand m_hand = new Hand();

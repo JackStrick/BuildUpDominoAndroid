@@ -1,6 +1,8 @@
 package org.ramapo.jstrickl;
 
-public class Tile {
+import java.io.Serializable;
+
+public class Tile implements Serializable {
 
 	// Data Members
 	private char m_Color; 

@@ -2,6 +2,7 @@ package org.ramapo.jstrickl;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -39,13 +40,19 @@ public class MainActivity extends AppCompatActivity {
     {
         System.out.println("New Game!");
         Tournament game = new Tournament();
-        game.StartGame(1);
+        Round round = game.getRound();
+        game.SetRounds(0);
+        Intent intent = new Intent(MainActivity.this, MainGameActivity.class);
+        intent.putExtra("round", round);
+        intent.putExtra("choice", 1);
+        startActivity(intent);
+
     }
 
     public void loadGame(View view)
     {
         Tournament game = new Tournament();
-        game.StartGame(2);
+
     }
 
     public void quit(View view)

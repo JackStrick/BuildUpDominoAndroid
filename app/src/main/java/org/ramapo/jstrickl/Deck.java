@@ -1,9 +1,10 @@
 package org.ramapo.jstrickl;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Vector;
 
-public class Deck {
+public class Deck implements Serializable {
 
 	// Data Members
 	// Vector of white tiles - computer

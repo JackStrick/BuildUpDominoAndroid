@@ -1,8 +1,11 @@
 package org.ramapo.jstrickl;
 
+import java.io.Serializable;
 import java.util.Vector;
 
-public class GameBoard {
+import kotlin.jvm.internal.SerializedIr;
+
+public class GameBoard implements Serializable {
 
 	// Data Members
 	// Stack to store entire gameboard

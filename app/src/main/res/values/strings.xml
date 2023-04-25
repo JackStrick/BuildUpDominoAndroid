@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">BuildUp</string>
-    <color name = "backgroundColor">#35654d</color>
+    <color name="backgroundColor">#35654d</color>
 </resources>
