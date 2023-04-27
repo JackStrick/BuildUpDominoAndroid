@@ -10,7 +10,11 @@ public class GameBoard implements Serializable {
 	// Data Members
 	// Stack to store entire gameboard
 	private Vector<Tile> m_Stack = new Vector<Tile>();
-	
+	private String placementString = new String();
+
+
+	public String GetPlacementString() { return placementString; }
+
 	/* *********************************************************************
 	Function Name: GetDominoStack
 	Purpose: Used to retrieve gameboard stacks
@@ -101,6 +105,7 @@ public class GameBoard implements Serializable {
 	********************************************************************* */
 	public void TilePlacement(Tile a_tile, int a_pos)
 	{
+		placementString = "";
 		String position = null;
 		if (a_pos > 5)
 		{
@@ -112,8 +117,8 @@ public class GameBoard implements Serializable {
 			position = "B" + Integer.toString(a_pos + 1);
 		}
 
-		System.out.print("placing tile {" + a_tile.getColor() + a_tile.getLeftPips() + a_tile.getRightPips() + "} ");
-		System.out.print("on stack " + position);
+		placementString += "placing tile {" + a_tile.getColor() + a_tile.getLeftPips() + a_tile.getRightPips() + "} ";
+		placementString += "on stack " + position;
 		m_Stack.set(a_pos, a_tile);
 	}
 

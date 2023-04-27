@@ -213,12 +213,13 @@ public class MessageOutput implements Serializable {
 	Algorithm: None
 	Assistance Received: None
 	********************************************************************* */
-	public void DisplayScore(short a_playerScore, short a_cpuScore)
+	public String DisplayScore(short a_playerScore, short a_cpuScore)
 	{
-		System.out.print("\n\n\t\tSCOREBOARD");
-		System.out.print("\n------------------------------------------------");
-		System.out.print("\nHuman\t\t\tComputer\n");
-		System.out.print(a_playerScore + "\t\t\t" + a_cpuScore);
+		//System.out.print("\n\n\t\tSCOREBOARD");
+		String score = "------------------------------------------------";
+		score += "\nHuman: " + a_playerScore;
+		score += "\nComputer: "  + a_cpuScore;
+		return score;
 	}
 
 	/* *********************************************************************
@@ -237,7 +238,7 @@ public class MessageOutput implements Serializable {
 		System.out.print("\n\n\t\tSCOREBOARD");
 		System.out.print("\n------------------------------------------------");
 		System.out.print("\nHuman\t\t\tComputer\n");
-		System.out.print("Rounds: " + a_humanRounds + "\t\t" + "Rounds: " + a_cpuRounds);
+		System.out.print("Rounds: " + a_humanRounds + "\t\t\t\t" + "Rounds: " + a_cpuRounds);
 	}
 
 	/* *********************************************************************
@@ -251,26 +252,27 @@ public class MessageOutput implements Serializable {
 	Algorithm: None
 	Assistance Received: None
 	********************************************************************* */
-	public void Finished(short a_cpuRounds, short a_humanRounds)
+	public String Finished(short a_cpuRounds, short a_humanRounds)
 	{
-		System.out.print("\n\n\t\tSCOREBOARD");
-		System.out.print("\n------------------------------------------------");
-		System.out.print("\nHuman\t\t\tComputer\n");
-		System.out.print("Rounds: " + a_humanRounds + "\t\t" + "Rounds: " + a_cpuRounds);
+		String finish = "";
+		//System.out.print("\n\n\t\tSCOREBOARD");
+		finish += "\n------------------------------------------------";
+		finish += "\nHuman\nRounds: " + a_humanRounds;
+		finish += "\nComputer\nRounds: " + a_cpuRounds;
 		if (a_cpuRounds > a_humanRounds)
 		{
-			System.out.print("\nThe computer has won :(");
+			finish += "\n\nThe computer has won :(";
 		}
 		else if (a_cpuRounds < a_humanRounds)
 		{
-			System.out.print("\nYou have won!");
+			finish += "\n\nYou have won!";
 		}
 		else if (a_cpuRounds == a_humanRounds)
 		{
-			System.out.print("\nThe tournament has ended in a tie");
+			finish += "\n\nThe tournament has ended in a tie";
 		}
-		System.out.print("\n\nThank you for playing!\n");
-	
+		finish += "\n\nThank you for playing!\n";
+		return finish;
 	}
 		
 }

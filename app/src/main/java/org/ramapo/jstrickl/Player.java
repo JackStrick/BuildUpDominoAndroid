@@ -13,9 +13,16 @@ public class Player implements Serializable {
 
 	// Data Members
 	private Random rand = new Random();
+	private String strat  = new String();
 	private short m_points;
 	private boolean m_myTurn;
 	private short m_roundsWon;
+
+
+
+
+	public String GetStratString(){ return strat; }
+
 
 	/* *********************************************************************
 	Function Name: Choice
@@ -592,6 +599,7 @@ public class Player implements Serializable {
 	********************************************************************* */
 	public Vector<Vector<Integer>> Strategy(Vector<Tile> a_gameboard)
 	{
+		strat = "";
 		Vector<Vector<Integer>> possibleMoves = new Vector<Vector<Integer>>(2);
 		Vector<Integer> locVec = new Vector<Integer>();
 		Vector<Integer> tileVec = new Vector<Integer>();
@@ -646,7 +654,7 @@ public class Player implements Serializable {
 			if (possibleMoves.get(0).isEmpty())
 			{
 				// Now will check the rest of the board for any possible moves
-				System.out.print("\nSince there are no moves to play on White Tiles");
+				strat += "\nSince there are no moves to play on White Tiles";
 				for (int location = 0; location < a_gameboard.size(); location++)
 				{
 					for (int tile = 0; tile < GetHand().size(); tile++)
@@ -683,12 +691,12 @@ public class Player implements Serializable {
 						stack = "W" + (possibleMoves.get(0).get(0) - 5);
 					}
 
-					System.out.print("\nThe best move is to play Tile {" + GetHand().get(possibleMoves.get(1).get(0)).getColor() + GetHand().get(possibleMoves.get(1).get(0)).getLeftPips() + GetHand().get(possibleMoves.get(1).get(0)).getRightPips() + "} ");
-					System.out.print("on stack " + stack + " \nSince that is the lowest tile and highest stack tile");
+					strat += "\nThe best move is to play Tile {" + GetHand().get(possibleMoves.get(1).get(0)).getColor() + GetHand().get(possibleMoves.get(1).get(0)).getLeftPips() + GetHand().get(possibleMoves.get(1).get(0)).getRightPips() + "} ";
+					strat += "on stack " + stack + " \nSince that is the lowest tile and highest stack tile";
 				}
 				else
 				{
-					System.out.print("\nThere is no possible move you can make. You need to skip your turn. Enter 89 to skip");
+					strat = "There is no possible move you can make. You need to skip your turn. Press Skip";
 				}
 			}
 			else {
@@ -701,9 +709,9 @@ public class Player implements Serializable {
 				{
 					stack = "W" + Integer.toString(possibleMoves.get(0).get(0) - 5);
 				}
-				System.out.print("\nA tile can be played on top of a white tile");
-				System.out.print("\nThe best move is to play Tile {" + GetHand().get(possibleMoves.get(1).get(0)).getColor() + GetHand().get(possibleMoves.get(1).get(0)).getLeftPips() + GetHand().get(possibleMoves.get(1).get(0)).getRightPips() + "} ");
-				System.out.print("on Stack " + stack + " \nSince that is the lowest tile that can play on top of this stack tile");
+				strat += "\nA tile can be played on top of a white tile";
+				strat += "\nThe best move is to play Tile {" + GetHand().get(possibleMoves.get(1).get(0)).getColor() + GetHand().get(possibleMoves.get(1).get(0)).getLeftPips() + GetHand().get(possibleMoves.get(1).get(0)).getRightPips() + "} ";
+				strat += "on Stack " + stack + " \nSince that is the lowest tile that can play on top of this stack tile";
 			}
 
 		}
@@ -755,7 +763,7 @@ public class Player implements Serializable {
 			// This is empty if there is no location to place on top of your opponents tile
 			if (possibleMoves.get(0).isEmpty())
 			{
-				System.out.print("\nSince there are no moves to play on Black Tiles");
+				strat += "\nSince there are no moves to play on Black Tiles";
 				for (int location = 0; location < a_gameboard.size(); location++)
 				{
 					// Now will check the rest of the board for any possible moves
@@ -780,8 +788,8 @@ public class Player implements Serializable {
 				}
 			}
 			else {
-				System.out.print("\nThe computer has a tile that can be placed on top of a human's tile");
-				System.out.print("\nThe computer will choose the lowest tile that can be placed on the highest stack tile");
+				strat += "\nThe computer has a tile that can be placed on top of a human's tile";
+				strat += "\nThe computer will choose the lowest tile that can be placed on the highest stack tile";
 			}
 		}
 

@@ -7,6 +7,8 @@ public class Computer extends Player{
 	
 	// Data Member Color
 	private char m_tileColor = 'W';
+
+	private String compMove = new String();
 	
 	
 	
@@ -22,7 +24,11 @@ public class Computer extends Player{
 	{
 		return m_tileColor;
 	}
-	
+
+	public String GetCompMoveString() { return compMove; }
+
+
+
 	/* *********************************************************************
 	Function Name: Choice
 	Purpose: Virtual Function - Computer specific player function to determine
@@ -52,9 +58,6 @@ public class Computer extends Player{
 		// Will hold the tile position from hand in [0]
 		// Will hold the tile position on the gameboard in [1]
 		Vector<Integer> tile_loc = new Vector<Integer>();
-
-		System.out.print("\n\nComputer's Hand\n");
-		ShowHand();
 
 		// possibleMoves will hold the gameboard position and hand position
 		Vector<Vector<Integer>> possibleMoves = Strategy(a_gameBoardStack);

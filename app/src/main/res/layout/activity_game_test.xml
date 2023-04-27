@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor">
@@ -12,14 +13,16 @@
 
 
         <!--<TextView
+            android:id="@+id/turn"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="BuildUp"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
             />-->
+
+
 
         <TextView
             android:text="Computer Hand"
@@ -356,7 +359,7 @@
         </HorizontalScrollView>
 
         <TextView
-            android:text="Computer Stack"
+            android:text="Computer Stack\n   W1       W2        W3       W4       W5       W6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
@@ -447,7 +450,7 @@
         </HorizontalScrollView>
 
         <TextView
-            android:text="Human Stack"
+            android:text="Human Stack\n   B1        B2         B3        B4        B5        B6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
@@ -538,7 +541,15 @@
             </LinearLayout>
 
         </HorizontalScrollView>
-
+        <TextView
+            android:id="@+id/turn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            />
         <TextView
             android:text="Human Boneyard"
             android:layout_width="match_parent"
@@ -791,21 +802,71 @@
                 android:id="@+id/humanHelp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@android:color/white"
-                android:text="Help"
-                android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
-                android:onClick="Help"/>
+                android:layout_marginRight="10dp"
+                android:background="@android:color/white"
+                android:onClick="Help"
+                android:text="Help"
+                android:textColor="#FFFFFF"
+                app:backgroundTint="#02398C" />
+
+            <Button
+                android:id="@+id/humanSkip"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/white"
+                android:onClick="Skip"
+                android:text="Skip"
+                app:backgroundTint="#8C0202" />
 
             <Button
                 android:id="@+id/humanContinue"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@android:color/white"
-                android:text="Continue"
-                android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
-                android:onClick="Continue"/>
+                android:layout_marginRight="10dp"
+                android:background="@android:color/white"
+                android:onClick="Continue"
+                android:text="Continue"
+                app:backgroundTint="#02398C" />
+
+            <Button
+                android:id="@+id/new_game"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/white"
+                android:onClick="Continue"
+                android:text="Play Again"
+                android:visibility="gone"
+                app:backgroundTint="#4CAF50" />
+
+            <Button
+                android:id="@+id/quitGame"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/white"
+                android:onClick="QuitGame"
+                android:text="Quit"
+                android:visibility="gone"
+                app:backgroundTint="#8C0202" />
+
+            <Button
+                android:id="@+id/humanSave"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/white"
+                android:onClick="SaveGameClicked"
+                android:text="Save and Exit"
+                android:visibility="gone"
+                app:backgroundTint="#02398C" />
 
         </LinearLayout>
 
@@ -914,15 +975,54 @@
 
 
         <!-- Popup Box -->
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="7dp">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rounds Won\nHuman:\nComputer:"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/roundsWon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text=""
+                android:textSize="14sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Current Score\nHuman:\nComputer:"
+                android:textColor="@color/white"
+                android:layout_marginLeft="100dp"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/currentScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text=""
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
         <TextView
-            android:id="@+id/AlertTextView"
-            android:layout_width="wrap_content"
+            android:id="@+id/MoveLog"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:text="MyAlert!!!"
-            android:textSize="20sp"
-            android:visibility="invisible"
+            android:background="@color/white"
             />
 
     </LinearLayout>

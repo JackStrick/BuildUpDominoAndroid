@@ -1,9 +1,23 @@
 package org.ramapo.jstrickl;
 
+import static android.content.ContentValues.TAG;
+
+import android.content.ContentResolver;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Environment;
+import android.util.Log;
+import android.Manifest;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.material.color.utilities.Score;
+
 import java.io.FileWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Vector;
 import java.util.Scanner;
 
@@ -23,6 +37,10 @@ public class Round implements Serializable {
 	private short m_handCount;
 	private short m_roundCount;
 
+	private String currentMove;
+
+	private Tile selectedTile;
+
 
 	public Vector<Tile> GetGameStacks()
 	{
@@ -36,6 +54,8 @@ public class Round implements Serializable {
 	public Vector<Tile> GetComputerHand() { return m_computer.GetHand(); }
 	public Vector<Tile> GetComputerBY() { return m_computer.GetBoneYard(); }
 
+	public Tile GetSelectedTile() { return selectedTile; };
+
 	public short GetHandCount() { return m_handCount; }
 
 	public Player GetPlayerTurn() {
@@ -46,8 +66,6 @@ public class Round implements Serializable {
 			return m_human;
 		}
 	}
-
-
 		
 	/* *********************************************************************
 	Function Name: GetHumanPoints
@@ -147,7 +165,7 @@ public class Round implements Serializable {
 			SetPlayerTurn(m_human);
 			m_computer.EndTurn();
 		}
-		else if (m_human.IsMyTurn())
+		else
 		{
 			SetPlayerTurn(m_computer);
 			m_human.EndTurn();
@@ -237,12 +255,12 @@ public class Round implements Serializable {
 
 	//Utility Functions
 	public boolean CheckValidity(int handTile, int stackTile, Player player){
-		boolean valid = player.Play(m_gameBoard.GetDominoStack().get(stackTile), player.GetHand().get(handTile));
+		selectedTile = player.GetHand().get(handTile);
+		boolean valid = player.Play(m_gameBoard.GetDominoStack().get(stackTile), selectedTile);
 		if (valid) {
 			m_gameBoard.TilePlacement(player.GetHand().get(handTile), stackTile);
 			player.RemoveTileFromHand(handTile);
 		}
-
 		return valid;
 	}
 
@@ -268,6 +286,89 @@ public class Round implements Serializable {
 		m_human.AddToHand(m_human.Draw());
 		m_computer.AddToHand(m_computer.Draw());
 		return whoIsFirst;
+	}
+
+	public String CompTurn() {
+		Vector<Integer> tile_loc = m_computer.Choice(m_gameBoard.GetDominoStack());
+		if (tile_loc.size() > 1)
+		{
+
+			m_gameBoard.TilePlacement(m_computer.GetHand().get(tile_loc.get(0)), tile_loc.get(1));
+			m_computer.RemoveTileFromHand(tile_loc.get(0));
+		}
+
+		return m_gameBoard.GetPlacementString();
+	}
+
+	public boolean CheckPlaceable(){
+		if (IsPlaceableTiles(m_computer.GetHand()) || IsPlaceableTiles(m_human.GetHand())){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	public boolean UnPlaceableTilesInHand() {
+		if (!m_human.GetHand().isEmpty() && !IsPlaceableTiles(m_human.GetHand()) && !m_computer.GetHand().isEmpty() && !IsPlaceableTiles(m_computer.GetHand()))
+		{
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	public String EndHand() {
+		UpdatePoints();
+		String score = m_msg.DisplayScore(m_human.GetPoints(), m_computer.GetPoints());
+		m_handCount++;
+		return score;
+	}
+
+	public void EndRound(){
+		m_gameBoard.DisplayGameBoard();
+		m_gameBoard.ClearBoard();
+		RoundWin();
+		m_handCount++;
+	}
+
+	public String ScoreGame()
+	{
+		int human = GetHumanPoints();
+		int cpu = GetComputerPoints();
+		String winner = "";
+		if (human > cpu)
+		{
+			winner += "Player wins round";
+		}
+		else if (cpu > human)
+		{
+			winner += "\n\nComputer wins round";
+		}
+		else if (cpu == human)
+		{
+			winner += "\n\nRound ended in a tie";
+		}
+		ResetPoints();
+		m_roundCount++;
+		return winner;
+	}
+
+	/* *********************************************************************
+	Function Name: EndGame
+	Purpose:	Collects both players total rounds won and sends them
+	            to MessageOutput class Finished() function to determine
+	            the overall tournament winner
+	Parameters: None
+	Return Value: None
+	Algorithm:None
+	Assistance Received: None
+	********************************************************************* */
+	public String EndGame()
+	{
+		String finish = m_msg.Finished(GetRoundsComputerWon(), GetRoundsHumanWon());
+		return finish;
 	}
 
 		/* *********************************************************************
@@ -418,39 +519,28 @@ public class Round implements Serializable {
 					4) Display the gameboard to the user
 		Assistance Received: none
 		********************************************************************* */
-		public void StartFromFile()
+		public void StartFromFile(Uri uri)
 		{
-			File file;
-			String home = System.getProperty("user.home");
-		    String path = "/Files/School/Ramapo/Spring 2023/CMPS366 - OPL/GameFilesTest/";
-			String fileName;
+			// Get a content resolver to open the input stream
+			String directory = "/mnt/sdcard/Download";
+			String fileName ="";
+			int filePos = uri.getPath().lastIndexOf('/');
+			if (filePos != -1) {
+				fileName = uri.getPath().substring(filePos + 1);
+			}
+
+			//Get the text file
+			File file = new File(directory,fileName);
+
+
 			// file path hold the path of the game file entered by the user
-			String filePath = home + path;
-			Scanner scan = new Scanner(System.in);
-			do 
-			{
-				System.out.print("\nPlease enter the file name: ");
-				fileName = scan.nextLine();
-				filePath += fileName;
-				
-				file = new File(filePath);
-				try 
-				{
-					// Attempt to open file from given path
-					Scanner fileScanner = new Scanner(file);
-					// check if the file exists
-					if (fileScanner.hasNext()) 
-					{
-						fileScanner.close();
-					}
-				} catch (FileNotFoundException e)
-				{
-					System.out.print("\n\nFile Does Not Exist.\n");
-				}
-				
-			// While the file does not exist, or cannot be found, ask for a new file path
-			} while (!file.exists());
-			
+			//String filePath = uri.getPath();
+			if (!file.exists()){
+				System.out.println("File not exist");
+			}
+
+
+
 			// File found, tells the user that the game is being loaded in
 			m_msg.LoadGame();
 
@@ -593,13 +683,13 @@ public class Round implements Serializable {
 	                	{
 	                		
 	                		line = fileScanner.nextLine();
-	                		if (line.equals("Computer")) 
+	                		if (line.equals(" Computer") || line.equals("Computer"))
 	                		{
 	                			m_computer.SetTurn();
 	                			m_human.EndTurn();
 	                			System.out.print("\n\nComputer Will Go First\n\n");
 	                		}
-	                		else if (line.equals("Human"))
+	                		else if (line.equals("Human") || line.equals(" Human"))
 	                		{
 	                			m_human.SetTurn();
 	                			m_computer.EndTurn();
@@ -758,16 +848,17 @@ public class Round implements Serializable {
 		********************************************************************* */
 		public void SaveGame()
 		{
+
+			String directory = "/mnt/sdcard/Download/";
+			String fileName ="Test";
+
 			Vector<Tile> temp;
-			String home = System.getProperty("user.home");
-		    String path = "/Files/School/Ramapo/Spring 2023/CMPS366 - OPL/GameFilesTest/";
 		    System.out.print("\n\nEnter file name to save - Do not include extension\n");
 		    // Create File Name With Data and txt File Extension
-		    Scanner scan = new Scanner(System.in);
-		    String fileName = scan.nextLine();
+
 		    
 		    
-		    fileName = home + path +  fileName + ".txt";
+		    fileName = directory +  fileName + ".txt";
 		    File saveFile = new File(fileName);
 		    
 		    System.out.print("\n\nSaving Game to: " + fileName);
@@ -784,7 +875,7 @@ public class Round implements Serializable {
 		        file.write("\tStacks: ");
 		        for (int i = 6; i < temp.size(); i++) {
 		            file.write(temp.get(i).getColor());
-		            file.write(temp.get(i).getLeftPips());
+		            file.write(Integer.toString(temp.get(i).getLeftPips()));
 		            file.write(temp.get(i).getRightPips() + " ");
 		        }
 
@@ -793,7 +884,7 @@ public class Round implements Serializable {
 		        file.write("\n\tBoneyard: ");
 		        for (int i = 0; i < temp.size(); i++) {
 		            file.write(temp.get(i).getColor());
-		            file.write(temp.get(i).getLeftPips());
+		            file.write(Integer.toString(temp.get(i).getLeftPips()));
 		            file.write(temp.get(i).getRightPips() + " ");
 		        }
 
@@ -802,7 +893,7 @@ public class Round implements Serializable {
 		        file.write("\n\tHand: ");
 		        for (int i = 0; i < temp.size(); i++) {
 		            file.write(temp.get(i).getColor());
-		            file.write(temp.get(i).getLeftPips());
+		            file.write(Integer.toString(temp.get(i).getLeftPips()));
 		            file.write(temp.get(i).getRightPips() + " ");
 		        }
 
@@ -820,7 +911,7 @@ public class Round implements Serializable {
 		        file.write("\tStacks: ");
 		        for (int i = 0; i < temp.size() - 6; i++) {
 		            file.write(temp.get(i).getColor());
-		            file.write(temp.get(i).getLeftPips());
+		            file.write(Integer.toString(temp.get(i).getLeftPips()));
 		            file.write(temp.get(i).getRightPips() + " ");
 		        }
 
@@ -830,7 +921,7 @@ public class Round implements Serializable {
 		        for (int i = 0; i < temp.size(); i++) 
 		        {
 		            file.write(temp.get(i).getColor());
-		            file.write(temp.get(i).getLeftPips());
+		            file.write(Integer.toString(temp.get(i).getLeftPips()));
 		            file.write(temp.get(i).getRightPips() + " ");
 		        }
 
@@ -840,8 +931,8 @@ public class Round implements Serializable {
 		        for (int i = 0; i < temp.size(); i++) 
 		        {
 		            file.write(temp.get(i).getColor());
-		            file.write(temp.get(i).getLeftPips());
-		            file.write(temp.get(i).getRightPips() + " ");   
+		            file.write(Integer.toString(temp.get(i).getLeftPips()));
+		            file.write(temp.get(i).getRightPips()+ " ");
 		        }
 		        
 
@@ -868,8 +959,7 @@ public class Round implements Serializable {
 		    {
 		    	System.out.print(e);
 		    }
-		    
-		    scan.close();
+
 		    System.exit(0);
 		}
 		
