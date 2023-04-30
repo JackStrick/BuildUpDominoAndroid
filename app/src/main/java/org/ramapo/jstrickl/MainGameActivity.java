@@ -29,20 +29,22 @@ import java.util.Vector;
 
 public class MainGameActivity extends AppCompatActivity {
 
-    private TextView alertTextView;
     private Round round;
     private int choice;
-    private int roundCount = 0;
     private int StackPosition;
     private int HandTile;
 
-
+    /**
+     * Creates the in game GUI
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_test);
-
-
 
         if (getIntent().getExtras() != null)
         {
@@ -65,9 +67,11 @@ public class MainGameActivity extends AppCompatActivity {
             }
             BuildBoard();
         }
-
     }
 
+    /**
+     * Builds the GUI for the game
+     */
     public void BuildBoard() {
         if ((round.GetComputerHand().isEmpty() && round.GetHumanHand().isEmpty()) && !round.GetComputerBY().isEmpty() && !round.GetHumanBY().isEmpty()) {
             String first = round.DetermineFirst();
@@ -89,8 +93,7 @@ public class MainGameActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.MoveLog)).append("\n\nRound Complete\n" + myRoundString);
            ((TextView) findViewById(R.id.turn)).setText("");
            choice = 1;
-           roundCount++;
-           ((TextView) findViewById(R.id.roundsWon)).setText("\n" + round.GetRoundsHumanWon() + "\n" + round.GetRoundsComputerWon());
+            ((TextView) findViewById(R.id.roundsWon)).setText("\n" + round.GetRoundsHumanWon() + "\n" + round.GetRoundsComputerWon());
            ((TextView) findViewById(R.id.currentScore)).setText("\n" + round.GetHumanPoints() + "\n" + round.GetComputerPoints());
            ((Button) findViewById(R.id.quitGame)).setVisibility(View.VISIBLE);
            ((Button) findViewById(R.id.new_game)).setVisibility(View.VISIBLE);
@@ -102,6 +105,10 @@ public class MainGameActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets the GUI view based on who's turn it is
+     * @param player the player whos turn it currently is
+     */
     public void SetTurnView(Object player){
 
         if (player instanceof Human){
@@ -133,7 +140,10 @@ public class MainGameActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * Initiates the computer's turn when Continue is clicked
+     * @param view of Continue
+     */
     public void Continue(View view){
         //Check if either have available move
         if (round.CheckPlaceable()) {
@@ -171,6 +181,9 @@ public class MainGameActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Initiates the next hand
+     */
     public void NextHand() {
         if (round.UnPlaceableTilesInHand()) {
             ((TextView) findViewById(R.id.MoveLog)).append("\n\nHand Complete: \nNo more tiles in either hand can be placed\nUpdating Score");
@@ -186,6 +199,10 @@ public class MainGameActivity extends AppCompatActivity {
         BuildBoard();
     }
 
+    /**
+     * Provides help to the user after Help button is clicked
+     * @param view of Help
+     */
     public void Help(View view) {
         Player player = round.GetPlayerTurn();
         player.Strategy(round.GetGameStacks());
@@ -193,6 +210,10 @@ public class MainGameActivity extends AppCompatActivity {
         AlertBuilder("Best Move", move);
     }
 
+    /**
+     * Checks if can skip then creates the alert and uses the round model after Skip is clicked
+     * @param view of Skip
+     */
     public void Skip(View view) {
         Player player = round.GetPlayerTurn();
         if (player.GetStratString() == "There is no possible move you can make. You need to skip your turn. Press Skip"
@@ -207,18 +228,30 @@ public class MainGameActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates the alert and uses the round model after quit game is clicked
+     * @param view of QuitGame
+     */
     public void QuitGame(View view) {
         String finish = round.EndGame();
         ((TextView) findViewById(R.id.MoveLog)).append("\n\n\"Game Over\nScoreboard\n" + finish);
         AlertBuilder("Game Over --- Scoreboard", finish);
     }
 
+    /**
+     * Creates the alert and uses the round model after save game is clicked
+     * @param view of SaveGame
+     */
     public void SaveGameClicked(View view) {
         AlertBuilder("Saving Game", "Current Game Progress Is Being Saved");
         ((TextView) findViewById(R.id.MoveLog)).append("\n\nCurrent Game Progress Is Being Saved");
         round.SaveGame();
     }
 
+    /**
+     * Onclick function to initiate the tile selection that will be placed
+     * @param view of the screen where the hand tile is selected
+     */
     public void TileSelect(View view){
         int tileId = view.getId();
         String buttonName = getResources().getResourceEntryName(tileId);
@@ -329,6 +362,10 @@ public class MainGameActivity extends AppCompatActivity {
         });
 
     }
+
+    /**
+     * Sets up the stack tiles on the GUI
+     */
     public void updateStackTiles(){
         Vector<Tile> stack = round.GetGameStacks();
         for (int i = 0; i < stack.size(); i++){
@@ -390,9 +427,13 @@ public class MainGameActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Sets up the boneyard tiles on the GUI
+     */
     public void updateBoneyardTiles(){
         Vector<Tile> compBY = round.GetComputerBY();
         Vector<Tile> humBY = round.GetHumanBY();
+        // Loops through all tiles and matches the tile with the correct tile image
         for (int i = 0; i < compBY.size(); i++){
             // Get color of current tile
             char letter = Character.toLowerCase(compBY.get(i).getColor());
@@ -491,6 +532,7 @@ public class MainGameActivity extends AppCompatActivity {
             }
         }
 
+        // When the boneyard size gets smaller, the old tiles are no longer visible
         if (compBY.size() < 22){
             ((ImageButton) findViewById(R.id.compBY22)).setVisibility(View.GONE);
             if (compBY.size() < 21){
@@ -725,6 +767,9 @@ public class MainGameActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Sets up the hand tiles on the GUI
+     */
     public void updateHandTiles() {
         Vector<Tile> compHand = round.GetComputerHand();
         Vector<Tile> humHand = round.GetHumanHand();
@@ -835,6 +880,9 @@ public class MainGameActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Checks if the move being made is valid
+     */
     public void CheckIfValid(){
         boolean play = round.CheckValidity(HandTile, StackPosition, round.GetPlayerTurn());
         if (!play){
@@ -889,6 +937,11 @@ public class MainGameActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates the dismissible popups in game
+     * @param title String that is displayed in the title section of the popup
+     * @param message String that is displayed in the message section of the popup
+     */
     public void AlertBuilder(String title, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainGameActivity.this);
         builder.setCancelable(true);
@@ -910,8 +963,4 @@ public class MainGameActivity extends AppCompatActivity {
         });
         builder.show();
     }
-
-
-
-
 }

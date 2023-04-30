@@ -18,196 +18,118 @@ public class Player implements Serializable {
 	private boolean m_myTurn;
 	private short m_roundsWon;
 
+	/**
+	 * Get the strategy provided by computer
+	 * @return String of the tile placement strategy
+	 */
+	public String GetStratString()
+	{
+		return strat;
+	}
 
 
-
-	public String GetStratString(){ return strat; }
-
-
-	/* *********************************************************************
-	Function Name: Choice
-	Purpose: Virtual Function for Player Tile Choice
-	Parameters: a_gameBoardStack - the current stacks available for play
-	Return Value: Vector<Integer> best move to play
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Virtual Function for Player Tile Choice
+	 * @param a_gameBoardStack Vector of Tiles, the current stacks available for play
+	 * @return Vector<Integer> best move to play
+	 */
 	public Vector<Integer> Choice(Vector<Tile> a_gameBoardStack)
 	{
 		Vector<Integer> parent = new Vector<Integer>();
 		parent = null;
 		return parent;
 	}
-	
-	/* *********************************************************************
-	Function Name: GetHand
-	Purpose: To get the current players hand
-	Parameters: None
-	Return Value: Char value for players color
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+
+	/**
+	 * Virtual function to get the current players hand
+	 * @return Char value for players color
+	 */
 	public char PlayerColor()
 	{
 		return ' ';
 	}
-	
-	/* *********************************************************************
-	Function Name: GetHand
-	Purpose: To get the current players hand
-	Parameters: None
-	Return Value: Vector<Tile> players hand
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+
+	/**
+	 * To get the current players hand
+	 * @return Vector<Tile> players hand
+	 */
 	public Vector<Tile> GetHand()
 	{
 		return m_hand.GetCurrentHand();
 	}
 
-	/* *********************************************************************
-	Function Name: GetBoneYard
-	Purpose: To get the current players boneyard
-	Parameters: None
-	Return Value: Vector<Tile> players boneyard
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To get the current players boneyard
+	 * @return Vector<Tile> players boneyard
+	 */
 	public Vector<Tile> GetBoneYard()
 	{
 		return m_boneYard;
 	}
 
-	/* *********************************************************************
-	Function Name: FirstTilePipTotal
-	Purpose: To get tile total of the players first tile
-	Parameters: None
-	Return Value: int of total tile pips
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To get tile total of the players first tile
+	 * @return int of total tile pips
+	 */
 	public int FirstTilePipTotal()
 	{
 		return m_hand.InitialTilePipTotal();
 	}
 
-	/* *********************************************************************
-	Function Name: IsMyTurn
-	Purpose: To check if its the current players turn
-	Parameters: None
-	Return Value: bool - true if players turn
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To check if its the current players turn
+	 * @return bool - true if players turn
+	 */
 	public boolean IsMyTurn()
 	{
 		return m_myTurn;
 	}
 
-	/* *********************************************************************
-	Function Name: ShowHand
-	Purpose: To Display the current players hand to the console
-	Parameters: None
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
-	public void ShowHand()
-	{
-		m_hand.DisplayHand();
-	}
-
-	/* *********************************************************************
-	Function Name: Play
-	Purpose: To check if the tile can be played
-	Parameters: 
-				a_boardTile, 
-				a_handtile, 
-	Return Value: bool - True when tile choice and location choice
-							are allowed to be placed
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To check if the tile can be played
+	 * @param a_boardTile Tile on the stack to place on top of
+	 * @param a_handtile Tile to place on the stack
+	 * @return boolean for if the placement is valid
+	 */
 	public boolean Play(Tile a_boardTile, Tile a_handtile)
 	{
 		return IsValidPlacement(a_boardTile, a_handtile);
 	}
 
-	/* *********************************************************************
-	Function Name: GetPoints
-	Purpose: To get the players points
-	Parameters: None
-	Return Value: Players Points
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To get the players points
+	 * @return short player points
+	 */
 	public short GetPoints()
 	{
 		return m_points;
 	}
 
-	/* *********************************************************************
-	Function Name: GetRoundsWin
-	Purpose: To get the players rounds won
-	Parameters: None
-	Return Value: Players rounds won count
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To get the players rounds won
+	 * @return Short Players rounds won count
+	 */
 	public short GetRoundsWon()
 	{
 		return m_roundsWon;
 	}
 
-	/* *********************************************************************
-	Function Name: DisplayBoneyard
-	Purpose: To display the players boneyard to console
-	Parameters: None
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
-	public void DisplayBoneyard()
-	{
-		for (int i = 0; i < m_boneYard.size(); i++)
-		{
-			System.out.print("{" + m_boneYard.get(i).getColor());
-			System.out.print(m_boneYard.get(i).getLeftPips());
-			System.out.print(m_boneYard.get(i).getRightPips() + "} ");
-		}
-	}
-
 
 	//MUTATOR START
-	/* *********************************************************************
-	Function Name: Take
-	Purpose: To take tiles from the deck
-	Parameters:
-				a_tiles, Vector of tile objects
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+
+	/**
+	 * To take tiles from the deck
+	 * @param a_tiles Vector of tile objects
+	 */
 	public void Take(Vector<Tile> a_tiles)
 	{
 		m_boneYard = a_tiles;
 	}
 
-	/* *********************************************************************
-	Function Name: Draw
-	Purpose: To gather tiles from player boneyard into hand
-	Parameters: None
-	Return Value: 
-					playerHand, a Vector of Tile objects representing the 
-					tiles in the players hand
-	Algorithm: 
-				1) Checks the size of the boneyard to indicate how far
-					players are into the game
-					a) This gets used to create the gameboard and
-						also every hand after
-					b) The last hand only draws 4 tiles 
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To gather tiles from player boneyard into hand
+	 * @return Vector of Tile objects representing the tiles in the players hand
+	 */
 	public Vector<Tile> Draw()
 	{
 		Vector<Tile> playerHand = new Vector<Tile>();
@@ -242,18 +164,11 @@ public class Player implements Serializable {
 		return playerHand;
 	}
 
-
-	/* *********************************************************************
-	Function Name: SetStacks
-	Purpose: To set the gameboard stacks by parsing a stack string
-				This is used when starting from a file 
-	Parameters: string stack, string containing stack info
-	Return Value:
-					stackTiles, a Vector of Tile objects representing the
-					tiles that make up the gameboard
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To set the game board stacks by parsing a stack string from file
+	 * @param a_stack string containing stack info
+	 * @return Vector of Tile objects representing the  tiles that make up the gameboard
+	 */
 	public Vector<Tile> SetStacks(String a_stack)
 	{
 		char[] currTile = new char[a_stack.length()];
@@ -277,15 +192,10 @@ public class Player implements Serializable {
 		return stackTiles;
 	}
 
-	/* *********************************************************************
-	Function Name: SetBoneyard
-	Purpose: To set the boneyard by parsing a boneyard string
-				This is used when starting from a file
-	Parameters: string a_boneyard, string containing boneyard info
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To set the boneyard by parsing a boneyard string. This is used when starting from a file
+	 * @param a_boneyard string containing boneyard info
+	 */
 	public void SetBoneyard(String a_boneyard)
 	{
 		char[] currBy = new char[a_boneyard.length()];
@@ -310,15 +220,10 @@ public class Player implements Serializable {
 		}
 	}
 
-	/* *********************************************************************
-	Function Name: SetHand
-	Purpose: To set the players hand by parsing a hand string
-				This is used when starting from a file
-	Parameters: string a_hand, string containing hand info
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To set the players hand by parsing a hand string. This is used when starting from a file
+	 * @param a_hand string containing hand info
+	 */
 	public void SetHand(String a_hand)
 	{
 		char[] currHand = new char[a_hand.length()];
@@ -341,48 +246,27 @@ public class Player implements Serializable {
 		AddToHand(handTiles);
 	}
 
-	/* *********************************************************************
-	Function Name: PointReset
-	Purpose:
-			Drop Player points back to 0
-	Parameters: None
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Drop Player points back to 0
+	 */
 	public void PointReset()
 	{
 		m_points = 0;
 	}
 
-	/* *********************************************************************
-	Function Name: SetPoint
-	Purpose: 
-			Add points to the running total
-	Parameters: 
-				a_points, holding the players current points after
-				a hand
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Add points to the running total
+	 * @param a_points int holding the players current points after a hand
+	 */
 	public void SetPoints(int a_points)
 	{
 		m_points += a_points;
 	}
 
-
-	/* *********************************************************************
-	Function Name: SetRoundsWon
-	Purpose: To set the number of rounds a player has won
-				This is used when starting from a file
-	Parameters: 
-				a_rounds, unsugned short of total rounds a player
-				has won so far
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To set the number of rounds a player has won. This is used when starting from a file
+	 * @param a_rounds short of total rounds a player has won so far
+	 */
 	public void SetRoundsWon(short a_rounds)
 	{
 		if(a_rounds >= 0)
@@ -395,45 +279,25 @@ public class Player implements Serializable {
 		}
 	}
 
-	/* *********************************************************************
-	Function Name: SetTurn
-	Purpose:
-			Sets the players turn to true
-	Parameters: None
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Sets the players turn to true
+	 */
 	public void SetTurn()
 	{
 		m_myTurn = true;
 	}
 
-	/* *********************************************************************
-	Function Name: EndTurn
-	Purpose:
-			Sets the players turn to false
-	Parameters: None
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Sets the players turn to false
+	 */
 	public void EndTurn()
 	{
 		m_myTurn = false;
 	}
 
-
-	/* *********************************************************************
-	Function Name: ReturnTiles
-	Purpose:
-			Returns initial tile back to the boneyard, clears the hand,
-			and reshuffles the boneyard
-	Parameters: None
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Returns initial tile back to the boneyard, clears the hand, and reshuffles the boneyard
+	 */
 	public void ReturnTiles()
 	{
 		Tile playerTile = m_hand.GetInitialTile();
@@ -442,38 +306,27 @@ public class Player implements Serializable {
 		ShuffleBoneyard();
 	}
 
-	/* *********************************************************************
-	Function Name: AddHand
-	Purpose:
-			Sets the players hand to be equal to the Vector of
-			tile objects being passed in
-	Parameters: 
-				a_playerTiles, Vector of tile objects
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Sets the players hand to be equal to the Vector of tile objects being passed in
+	 * @param a_playerTiles Vector of tile objects that will be the hand
+	 */
 	public void AddToHand(Vector<Tile> a_playerTiles)
 	{
 		m_hand.SetHand(a_playerTiles);
 	}
 
-	/* *********************************************************************
-	Function Name: RemoveTileFromHand
-	Purpose:
-			Removes the tile at the index given by a_loc
-	Parameters: a_loc, the index of which tile to removed from
-				the hand
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Removes the tile at the index given by a_loc
+	 * @param a_loc int, the index of which tile to removed from the hand
+	 */
 	public void RemoveTileFromHand(int a_loc)
 	{
 		m_hand.Remove(a_loc);
 	}
 
-
+	/**
+	 * Decreases the players points based on the tiles remaining in their hand once the hand ends, and then removes them from the hand
+	 */
 	/* *********************************************************************
 	Function Name: DropPoints
 	Purpose:
@@ -506,53 +359,30 @@ public class Player implements Serializable {
 		}
 	}
 
-
-	/* *********************************************************************
-	Function Name: WonRound
-	Purpose:
-			Called when a player wins the round. Increase their win
-			count by 1
-	Parameters: None
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Called when a player wins the round. Increase their win count by 1
+	 */
 	public void WonRound()
 	{
 		m_roundsWon += 1;
 	}
 
 	//UTILITY FUNCTIONS
-	/* *********************************************************************
-	Function Name: ShuffleBoneyard
-	Purpose:
-			Used to shuffle a players boneyard after they put a
-			tile back in their pile
-	Parameters: None
-	Return Value: None
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+
+	/**
+	 * Used to shuffle a players boneyard after they put a tile back in their pile
+	 */
 	public void ShuffleBoneyard()
 	{
 		Collections.shuffle(m_boneYard);
 	}
 
-	/* *********************************************************************
-	Function Name: InitialTile
-	Purpose:
-			Randomly selects a tile from the shuffled boneyard and
-			returns it to a players hand to check who will go first
-	Parameters: None
-	Return Value: 
-				playerTile, the tile object that will determine who
-				goes first
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Randomly selects a tile from the shuffled boneyard and returns it to a players hand to check who will go first
+	 * @return the tile object that will determine who goes first
+	 */
 	public Tile InitialTile()
 	{
-
 		int selection = rand.nextInt(m_boneYard.size());
 
 		Tile playerTile = m_boneYard.remove(selection);
@@ -562,41 +392,11 @@ public class Player implements Serializable {
 		return playerTile;
 	}
 
-
-
-
-	/* *********************************************************************
-	Function Name: Strategy
-	Purpose:
-			The logic used by the computer to play a peice. Computer uses
-			for each play. Human can ask for help.
-	Parameters: 
-				a_gameboard, a Vector of tile objects representing
-				the gameboard stacks
-	Return Value:
-				possibleMoves, a Vector of a Vector of integers
-				possibleMoves.get(0) = the location on the gameboard
-				possibleMoves.get(1) = the tile position in player hand
-	Algorithm: 
-				1) First check if the player has B or W tiles in hand
-					a) The player with B tiles will prefer to place on
-						top of white tiles
-					b) The player with W tiles will prefer to place on
-						top of black tiles
-				2) The strategy:
-						a) Loop through all of the stacks with
-							every tile in hand.
-						b) Verify if each is valid to place
-						c) If a tile is valid and possibleMoves is empty,
-							add the tile location and stack location
-						d) Every valid tile after, check which is the 
-							lowest possible tile that can be placed on the
-							highest possible stack of opposing teams tiles
-						e) If there are no options to place on top of the
-							opposing players stacks	place on the best of your own
-	Assistance Received: 
-		https://linuxhint.com/append-Vector-cpp/#:~:text=Appending%20to%20a%20Vector%20means,to%20append%20is%20push_back().
-	********************************************************************* */
+	/**
+	 * The logic used by the computer to play a piece. Computer uses for each play. Human can ask for help.
+	 * @param a_gameboard a Vector of tile objects representing the gameboard stacks
+	 * @return Vector of a Vector of integers that contains the location to place and the position of the tile in the hand
+	 */
 	public Vector<Vector<Integer>> Strategy(Vector<Tile> a_gameboard)
 	{
 		strat = "";
@@ -796,21 +596,12 @@ public class Player implements Serializable {
 		return possibleMoves;
 	}
 
-	/* *********************************************************************
-	Function Name: IsValidPlacement
-	Purpose:
-			Checks if the players choice of tile is a valid
-			move
-	Parameters:
-				Tile a_boardTile, the tile on the gamboard
-				Tile a_handtile, the tile from the players hand
-	Return Value:
-				bool -> True - If move is valid
-				bool -> False - If move is not valid
-	Algorithm: None
-	Assistance Received:
-		https://www.tutorialspoint.com/how-to-print-out-the-contents-of-a-Vector-in-cplusplus
-	********************************************************************* */
+	/**
+	 * Checks if the players choice of tile is a valid move
+	 * @param a_boardTile the tile on the gamboard to place on
+	 * @param a_handtile the tile from the players hand to place
+	 * @return boolean if the placement is valid
+	 */
 	public boolean IsValidPlacement(Tile a_boardTile, Tile a_handtile)
 	{
 		// If hand tile is larger than board, always true
@@ -835,20 +626,12 @@ public class Player implements Serializable {
 		return false;
 	}
 
-	/* *********************************************************************
-	Function Name: IsValidPlaceableTile
-	Purpose:
-			Checks if either player has any tiles in their hand that are
-			valid moves
-	Parameters:
-				a_gameBoardTiles, the tiles on the gamboard
-				a_playerTiles, the tiles from the players hand
-	Return Value:
-				bool -> True - If there exists a tile in hand that can be played
-				bool -> False - If there is no tile in hand that can be played
-	Algorithm: None
-	Assistance Received: None
-	********************************************************************* */
+	/**
+	 * Checks if either player has any tiles in their hand that are valid moves
+	 * @param a_playerTiles the tiles from the players hand
+	 * @param a_gameBoardTiles the tiles on the gamboard
+	 * @return boolean if there exists a tile in hand that can be played or not
+	 */
 	public boolean IsValidPlaceableTile(Vector<Tile> a_playerTiles, Vector<Tile> a_gameBoardTiles)
 	{
 
@@ -878,6 +661,4 @@ public class Player implements Serializable {
 		}
 		return false;
 	}
-	
-	
 }

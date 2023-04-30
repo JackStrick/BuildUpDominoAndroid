@@ -13,33 +13,27 @@ public class GameBoard implements Serializable {
 	private String placementString = new String();
 
 
-	public String GetPlacementString() { return placementString; }
+	/**
+	 Grabs the string to display last move made
+	 @return String of what move the last player made
+	 */
+	public String GetPlacementString()
+	{
+		return placementString;
+	}
 
-	/* *********************************************************************
-	Function Name: GetDominoStack
-	Purpose: Used to retrieve gameboard stacks
-	Parameters: None
-	Return Value: 
-				vector<Tile>: Returns the stacks of the gameboard
-	Algorithm: None
-	Assistance Received: None
-	********************************************************************* */
+	/**
+	 Used to retrieve gameboard stacks
+	 @return Vector<Tile> representing the stacks of the gameboard
+	 */
 	public Vector<Tile> GetDominoStack()
 	{
 		return m_Stack;
 	}
 
-	/* *********************************************************************
-	Function Name: DisplayGameBoard
-	Purpose: Displays the current stacks to the user
-	Parameters: None
-	Return Value: None
-	Algorithm:
-				1) Loops through and displays all 6 Stack names for Black
-				2) Loops through gameboard stacks and displays all 12
-				3) Loops through and displays all 6 Stack names for White
-	Assistance Received: None
-	********************************************************************* */
+	/**
+	 Displays the current stacks to the user
+	 */
 	public void DisplayGameBoard()
 	{
 		System.out.print("\n\n\t\t\tGAMEBOARD");
@@ -67,18 +61,10 @@ public class GameBoard implements Serializable {
 		}
 	}
 
-	/* *********************************************************************
-	Function Name: SetGameBoard
-	Purpose: Sets the stack vector that holds all of the current stack tiles
-	Parameters: 
-				a_tiles, vector of tiles that should be placed onto the
-				gameboard stack
-	Return Value: None
-	Algorithm:
-				1) Loops through given tile vector, a_tile, and pushes the stack
-					objects on to the gameboard vector
-	Assistance Received: None
-	********************************************************************* */
+	/**
+	 Sets the stack vector that holds all of the current stack tiles
+	 @param a_tiles Vector of tiles to be placed on the gameboard stack
+	 */
 	public void SetGameBoard(Vector<Tile> a_tiles)
 	{
 		for (int i = 0; i < a_tiles.size(); i++)
@@ -87,22 +73,11 @@ public class GameBoard implements Serializable {
 		}
 	}
 
-	/* *********************************************************************
-	Function Name: TilePlacement
-	Purpose: Once the player decides on a tile, replaces the stack in
-				given position with new tile object
-	Parameters:
-				a_tile, the tile object selected by the player
-				a_pos, the location on the gameboard where the player chose
-				to place the tile
-	Return Value: None
-	Algorithm:
-				1) Based on position, creates string that is the equivalent
-					to its name (B1 through W6)
-				2) Displays where the player is placing the tile
-				3) Replaces the tile object at given location
-	Assistance Received: None
-	********************************************************************* */
+	/**
+	 Replaces the stack in given position with new tile object
+	 @param a_tile Tile selected by player to place
+	 @param a_pos Int that represents the stack location
+	 */
 	public void TilePlacement(Tile a_tile, int a_pos)
 	{
 		placementString = "";
@@ -122,15 +97,9 @@ public class GameBoard implements Serializable {
 		m_Stack.set(a_pos, a_tile);
 	}
 
-	/* *********************************************************************
-	Function Name: ClearBoard
-	Purpose: Clears the gameboard vector. Typically used after a round is over.
-	Parameters: None
-	Return Value: None
-	Algorithm:
-				1) Clear gameboard vector of tiles
-	Assistance Received: None
-	********************************************************************* */
+	/**
+	 Clears the game board vector. Typically used after a round is over.
+	 */
 	public void ClearBoard()
 	{
 		m_Stack.clear();

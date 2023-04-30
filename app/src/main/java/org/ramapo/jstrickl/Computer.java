@@ -3,56 +3,26 @@ package org.ramapo.jstrickl;
 import java.io.Serializable;
 import java.util.Vector;
 
-public class Computer extends Player{
-	
+public class Computer extends Player
+{
 	// Data Member Color
 	private char m_tileColor = 'W';
 
-	private String compMove = new String();
-	
-	
-	
-	
-	/* *********************************************************************
-	Function Name: PlayerColor
-	Purpose: To get the current players color
-	Return Value: Char value for players color
-	Algorithm: None
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 To get the current players color
+	 @return Char value for players color
+	 */
 	public char PlayerColor()
 	{
 		return m_tileColor;
 	}
 
-	public String GetCompMoveString() { return compMove; }
 
-
-
-	/* *********************************************************************
-	Function Name: Choice
-	Purpose: Virtual Function - Computer specific player function to determine
-				which tile to place
-	Parameters: 
-				a_gameBoardStack, the vector of tiles that represents
-				the entire gameboard
-	Return Value: 
-				vector<int> that contains the tile position in players 
-				hand and the position on the gameboard with which to place
-				the tile
-	Algorithm:
-				1) Shows the computers hand to the user
-					(For demo purposes)
-				2) Calls for the Player:Strategy function to get a move
-					and returns a vector of a vector of ints that holds 
-					the possible move and the location in a hand of which
-					tile to place
-				3) If there is a move in possibleMoves, then place the move
-					onto a vector of ints that will be returned 
-				4) If possibleMoves is empty, the computer cannot play
-					so it should not give a move
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 Computer specific player function to determine which tile to place
+	 @param a_gameBoardStack Vector of tiles that represents the entire gameboard
+	 @return vector<int> that contains the tile position in players hand and the position on the gameboard with which to place the tile
+	 */
 	public Vector<Integer> Choice(Vector<Tile> a_gameBoardStack)
 	{
 		// Will hold the tile position from hand in [0]

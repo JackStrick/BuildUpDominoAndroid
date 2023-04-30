@@ -1,29 +1,17 @@
 package org.ramapo.jstrickl;
 
-import static android.content.ContentValues.TAG;
-
-import android.content.ContentResolver;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Environment;
-import android.util.Log;
-import android.Manifest;
-import androidx.core.content.ContextCompat;
-
-import com.google.android.material.color.utilities.Score;
-
 import java.io.FileWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.net.URI;
 import java.util.Vector;
 import java.util.Scanner;
 
 
 
-public class Round implements Serializable {
+public class Round implements Serializable
+{
 
 	//Private Class Objects
 	private Human m_human = new Human();
@@ -35,129 +23,138 @@ public class Round implements Serializable {
 
 	//Data Members
 	private short m_handCount;
-	private short m_roundCount;
-
-	private String currentMove;
 
 	private Tile selectedTile;
 
-
+	/**
+	 * To get the board stack
+	 * @return Vector<Tile> objects that represent the board stack
+	 */
 	public Vector<Tile> GetGameStacks()
 	{
 		return m_gameBoard.GetDominoStack();
 	}
+
+	/**
+	 * To get the human's hand
+	 * @return Vector<Tile> objects that represent the human hand
+	 */
 	public Vector<Tile> GetHumanHand()
 	{
 		return m_human.GetHand();
 	}
-	public Vector<Tile> GetHumanBY() { return m_human.GetBoneYard(); }
-	public Vector<Tile> GetComputerHand() { return m_computer.GetHand(); }
-	public Vector<Tile> GetComputerBY() { return m_computer.GetBoneYard(); }
 
-	public Tile GetSelectedTile() { return selectedTile; };
+	/**
+	 * To get the human boneyard
+	 * @return Vector<Tile> objects that represent the human boneyard
+	 */
+	public Vector<Tile> GetHumanBY()
+	{
+		return m_human.GetBoneYard();
+	}
 
-	public short GetHandCount() { return m_handCount; }
+	/**
+	 * To get the computer's hand
+	 * @return Vector<Tile> objects that represent the computer hand
+	 */
+	public Vector<Tile> GetComputerHand()
+	{
+		return m_computer.GetHand();
+	}
 
-	public Player GetPlayerTurn() {
-		if (m_computer.IsMyTurn()){
+	/**
+	 * To get the computer's boneyard
+	 * @return Vector<Tile> objects that represent the computer boneyard
+	 */
+	public Vector<Tile> GetComputerBY()
+	{
+		return m_computer.GetBoneYard();
+	}
+
+	/**
+	 * Get the currently selected tile to place
+	 * @return Tile objects that represents the tile from hand selected by player
+	 */
+	public Tile GetSelectedTile()
+	{
+		return selectedTile;
+	};
+
+	/**
+	 * Get the number of hands so far
+	 * @return Short for the number of hands in the round
+	 */
+	public short GetHandCount()
+	{
+		return m_handCount;
+	}
+
+	/**
+	 * Get the current player who's turn it is
+	 * @return Player who's current turn
+	 */
+	public Player GetPlayerTurn()
+	{
+		if (m_computer.IsMyTurn())
+		{
 			return m_computer;
 		}
-		else {
+		else
+		{
 			return m_human;
 		}
 	}
-		
-	/* *********************************************************************
-	Function Name: GetHumanPoints
-	Purpose: To get the total human points after a round
-	Parameters: None
-	Return Value: The total human points after a round
-	Algorithm:
-				1) Calls Player::GetPoints
-				2) Returns value
-	Assistance Received: none
-	********************************************************************* */
+
+	/**
+	 * To get the total human points after a round
+	 * @return short of total human points scored in the round
+	 */
 	public short GetHumanPoints()
 	{
 		return m_human.GetPoints();
 	}
 
-	/* *********************************************************************
-	Function Name: GetComputerPoints
-	Purpose: To get the total computer points after a round
-	Parameters: None
-	Return Value: The total computer points after a round
-	Algorithm:
-				1) Calls Player::GetPoints
-				2) Returns value
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To get the total computer points after a round
+	 * @return short of total computer points scored in the round
+	 */
 	public short GetComputerPoints()
 	{
 		return m_computer.GetPoints();
 	}
 
-	/* *********************************************************************
-	Function Name: GetHumanRoundsWon
-	Purpose: To get the total rounds human won after a tournament
-	Parameters: None
-	Return Value: The total human rounds won after a round
-	Algorithm:
-				1) Calls Player::GetRoundsWon
-				2) Returns round quantity
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To get the total rounds human won after a tournament
+	 * @return Short The total human rounds won after a round
+	 */
 	public short GetRoundsHumanWon()
 	{
 		return m_human.GetRoundsWon();
 	}
 
-
-	/* *********************************************************************
-	Function Name: GetComputerRoundsWon
-	Purpose: To get the total rounds computer won after a tournament
-	Parameters: None
-	Return Value: The total computer rounds won after a round
-	Algorithm:
-				1) Calls Player::GetRoundsWon
-				2) Returns round quantity
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To get the total rounds computer won after a tournament
+	 * @return Short The total computer rounds won after a round
+	 */
 	public short GetRoundsComputerWon()
 	{
 		return m_computer.GetRoundsWon();
 	}
 
 	//Mutators
-	/* *********************************************************************
-	Function Name: SetPlayerTurn
-	Purpose: To set whose turn it is
-	Parameters:
-				a_player, an object of player type, either computer or human
-	Return Value: None
-	Algorithm:
-				1) Calls Player::SetTurn() to set player turn value to true
-	Assistance Received: none
-	********************************************************************* */
+
+	/**
+	 * To set whose turn it is
+	 * @param a_player an object of player type, either computer or human
+	 */
 	public void SetPlayerTurn(Player a_player)
 	{
 		a_player.SetTurn();
 	}
 
-	/* *********************************************************************
-	Function Name: SwitchTurn
-	Purpose: To switch turns to next player up
-	Parameters: None
-	Return Value: None
-	Algorithm:
-				1) Checks if its the computers turn
-					a) If yes, make it the humans turn
-					b) Call Player::EndTurn() which sets its turn to false
-				2) If no, checks if its the humans turn
-					a) If yes, make it the computers turn
-					b) Call Player::EndTurn() which sets humans turn to false
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * To switch turns to next player up
+	 */
 	public void SwitchTurn()
 	{
 		if (m_computer.IsMyTurn())
@@ -172,23 +169,9 @@ public class Round implements Serializable {
 		}
 	}
 
-	/* *********************************************************************
-	Function Name: UpdatePoints
-	Purpose: Updates each players point total
-	Parameters: None
-	Return Value: None
-	Algorithm:
-				1) Loops through entire gameboard
-					a) If the tile on top of stack belongs to the
-						human (B), add total pips of that tile to
-						human points
-					b) If the tile on top of stack belongs to the
-						computer (W), add total pips of that tile to
-						computer points
-				2) Calls Player::Drop Points to decrease the total tile
-					values left in player hand
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Updates each players point total
+	 */
 	public void UpdatePoints()
 	{
 		// Go through entire gameboard and give points to each player
@@ -209,34 +192,18 @@ public class Round implements Serializable {
 		m_computer.DropPoints();
 	}
 
-	/* *********************************************************************
-	Function Name: ResetPoints
-	Purpose: Sets points back to zero
-	Parameters: None
-	Return Value: None
-	Algorithm:
-				1) Calls Player::PointReset for each player to
-					set the points back to zero after a round
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Sets points back to zero
+	 */
 	public void ResetPoints()
 	{
 		m_human.PointReset();
 		m_computer.PointReset();
 	}
 
-	/* *********************************************************************
-	Function Name: RoundWin
-	Purpose: Increments users total rounds won based on who won the round
-	Parameters: None
-	Return Value: None
-	Algorithm:
-				1) Check whose points are greater from current round
-					a) If human, human wins round
-					b) If computer, computer wins round
-					c) If neither, its a tie
-	Assistance Received: none
-	********************************************************************* */
+	/**
+	 * Increments users total rounds won based on who won the round
+	 */
 	public void RoundWin()
 	{
 		if (GetHumanPoints() > GetComputerPoints())
@@ -250,11 +217,16 @@ public class Round implements Serializable {
 
 	}
 
-
-
-
 	//Utility Functions
-	public boolean CheckValidity(int handTile, int stackTile, Player player){
+	/**
+	 * Check the move being made is valid
+	 * @param handTile Int of which tile in players hand
+	 * @param stackTile Int of the loaction the player is trying to place the handTile
+	 * @param player Player object, which player is making the request
+	 * @return Boolean, if the move is valid or not
+	 */
+	public boolean CheckValidity(int handTile, int stackTile, Player player)
+	{
 		selectedTile = player.GetHand().get(handTile);
 		boolean valid = player.Play(m_gameBoard.GetDominoStack().get(stackTile), selectedTile);
 		if (valid) {
@@ -264,6 +236,10 @@ public class Round implements Serializable {
 		return valid;
 	}
 
+	/**
+	 * To decide what player will go first in the start of the round
+	 * @return String to display the first player to the user
+	 */
 	public String DetermineFirst(){
 		int first = 0;
 		System.out.print("\n\nStarting New Hand.....");
@@ -288,6 +264,10 @@ public class Round implements Serializable {
 		return whoIsFirst;
 	}
 
+	/**
+	 * When it is the computers turn to make a move
+	 * @return String of the move the computer is making
+	 */
 	public String CompTurn() {
 		Vector<Integer> tile_loc = m_computer.Choice(m_gameBoard.GetDominoStack());
 		if (tile_loc.size() > 1)
@@ -300,6 +280,10 @@ public class Round implements Serializable {
 		return m_gameBoard.GetPlacementString();
 	}
 
+	/**
+	 * Check if either player has a possible move
+	 * @return Boolean if there is a move or not available for either player
+	 */
 	public boolean CheckPlaceable(){
 		if (IsPlaceableTiles(m_computer.GetHand()) || IsPlaceableTiles(m_human.GetHand())){
 			return true;
@@ -309,6 +293,10 @@ public class Round implements Serializable {
 		}
 	}
 
+	/**
+	 * Check if there are tiles that can't be played in the hand
+	 * @return Boolean if there are tiles with no possible moves
+	 */
 	public boolean UnPlaceableTilesInHand() {
 		if (!m_human.GetHand().isEmpty() && !IsPlaceableTiles(m_human.GetHand()) && !m_computer.GetHand().isEmpty() && !IsPlaceableTiles(m_computer.GetHand()))
 		{
@@ -319,6 +307,10 @@ public class Round implements Serializable {
 		}
 	}
 
+	/**
+	 * End hand after all valid moves have been made
+	 * @return String of the score so far
+	 */
 	public String EndHand() {
 		UpdatePoints();
 		String score = m_msg.DisplayScore(m_human.GetPoints(), m_computer.GetPoints());
@@ -326,6 +318,9 @@ public class Round implements Serializable {
 		return score;
 	}
 
+	/**
+	 * To end a round after all hands have been played
+	 */
 	public void EndRound(){
 		m_gameBoard.DisplayGameBoard();
 		m_gameBoard.ClearBoard();
@@ -333,6 +328,10 @@ public class Round implements Serializable {
 		m_handCount++;
 	}
 
+	/**
+	 * Get the final score of the round
+	 * @return String, the winner of the round
+	 */
 	public String ScoreGame()
 	{
 		int human = GetHumanPoints();
@@ -351,617 +350,445 @@ public class Round implements Serializable {
 			winner += "\n\nRound ended in a tie";
 		}
 		ResetPoints();
-		m_roundCount++;
 		return winner;
 	}
 
-	/* *********************************************************************
-	Function Name: EndGame
-	Purpose:	Collects both players total rounds won and sends them
-	            to MessageOutput class Finished() function to determine
-	            the overall tournament winner
-	Parameters: None
-	Return Value: None
-	Algorithm:None
-	Assistance Received: None
-	********************************************************************* */
+	/**
+	 * Collects both players total rounds won and sends them to MessageOutput class Finished() function to determine the overall tournament winner
+	 * @return String of the winner and final rounds score
+	 */
 	public String EndGame()
 	{
 		String finish = m_msg.Finished(GetRoundsComputerWon(), GetRoundsHumanWon());
 		return finish;
 	}
 
-		/* *********************************************************************
-		Function Name: StartRound
-		Purpose: Called by tournament to begin a round
-		Parameters: 
-					a_choice, the answer of whether to start new game
-					or from a file
-		Return Value: None
-		Algorithm:
-					1) Check if start new game or start from file
-						a) Game is initialized based on parameter
-					2) Check if each players hand is empty and also
-						if the boneyards of each player are not empty
-						a) If true, a new hand will start
-						b) If false, start from current hand
-					3) New hand: 
-							a) Both players draw a tile from their 
-								boneyard and compare. The larger tile holder
-								goes first. If the same return tile, shuffle
-								boneyard and repeat process
-							b) Set the first up player and diplay to the user
-							c) Both players draw the rest of their hand
-					4) If not new hand, or step 3 complete:
-							a) Check if either player can place a tile
-							b) If yes, enter turn sequence. 
-							c) Either players turn will call Choice() and return
-								a Vector to represent their selected tile and
-								the location on the gameboard to place
-					5) If done, or 4a returned false:
-							a) The hand is over
-							b) If players hands are not empty and there were no
-								playable tiles, print to let the user know
-							c) Update the score and move on to next hand if tiles
-								remain in the boneyard
-					6) If all hands complete and boneyards are empty
-							a) Clear the gameboard 
-							b) Update who won the round
-		Assistance Received: none
-		********************************************************************* */
-		public void StartRound()
-		{
-			//while (m_handCount < 4)
-			{
-				//DetermineFirst();
+	/**
+	 * Sets up all components needed for a new game
+	 */
+	public void StartNew()
+	{
+		m_handCount = 0;
+		//The deck is created and shuffled for computer and human
+		m_deck.GenerateTiles();
 
-				//while (IsPlaceableTiles(m_computer.GetHand()) || IsPlaceableTiles(m_human.GetHand()))
-				{
+		// Human takes their 28 tiles
+		m_human.Take(m_deck.Deal(m_human.PlayerColor()));
+		// Computer takes their 28 tiles
+		m_computer.Take(m_deck.Deal(m_computer.PlayerColor()));
 
-					//HUMAN TURN
-					if (m_human.IsMyTurn())
-					{
-						//m_gameBoard.DisplayGameBoard();
-						Vector<Integer> tile_loc = m_human.Choice(m_gameBoard.GetDominoStack());
+		// Human Draws 6 and places them on the gameboard
+		m_gameBoard.SetGameBoard(m_human.Draw());
 
-						
-						// If Selection Vector tile_loc is not empty, the tiles can be placed
-						if (tile_loc.size() > 1 && tile_loc.get(0) != 89)
-						{
-							System.out.print("You are ");
-							m_gameBoard.TilePlacement(m_human.GetHand().get(tile_loc.get(0)), tile_loc.get(1));
-							m_human.RemoveTileFromHand(tile_loc.get(0));
-						}
+		// Computer draws 6 and places them on the gameboard
+		m_gameBoard.SetGameBoard(m_computer.Draw());
+	}
 
-						// Switch turns before saving for no repeat turn
-						SwitchTurn();
-						//Prompt User to Save and Quit Game
-						boolean quit = m_msg.EndGame();
-						if (quit)
-						{
-							SaveGame();
-						}
-
-					}
-					//COMPUTER TURN
-					else if (m_computer.IsMyTurn())
-					{
-						//m_gameBoard.DisplayGameBoard();
-						Vector<Integer> tile_loc = m_computer.Choice(m_gameBoard.GetDominoStack());
-						if (tile_loc.size() > 1)
-						{
-							m_gameBoard.TilePlacement(m_computer.GetHand().get(tile_loc.get(0)), tile_loc.get(1));
-							m_computer.RemoveTileFromHand(tile_loc.get(0));
-						}
-						
-						SwitchTurn();
-					}
-				}
-				
-				if (!m_human.GetHand().isEmpty() && !IsPlaceableTiles(m_human.GetHand()) && !m_computer.GetHand().isEmpty() && !IsPlaceableTiles(m_computer.GetHand()))
-				{
-					System.out.print("\n\nNo more tiles in either hand can be placed\n\n");
-				}
-
-				System.out.print("\nHand Complete!\nUpdating Scoreboard....");
-				UpdatePoints();
-				m_msg.DisplayScore(m_human.GetPoints(), m_computer.GetPoints());
-				m_handCount++;	
-			}
-
-			m_gameBoard.DisplayGameBoard();
-			m_gameBoard.ClearBoard();
-			RoundWin();
+	/**
+	 * Sets up all components needed from a past game
+	 * @param uri of the file being loaded from
+	 */
+	public void StartFromFile(Uri uri)
+	{
+		// Get a content resolver to open the input stream
+		String directory = "/mnt/sdcard/Download";
+		String fileName ="";
+		int filePos = uri.getPath().lastIndexOf('/');
+		if (filePos != -1) {
+			fileName = uri.getPath().substring(filePos + 1);
 		}
 
-		/* *********************************************************************
-		Function Name: StartNew
-		Purpose: Sets up all components needed for a new game
-		Parameters: None
-		Return Value: None
-		Algorithm:
-					1) Initialize all crucial game components for
-						a brand new game
-					2) Display the gameboard to the user
-		Assistance Received: none
-		********************************************************************* */
-		public void StartNew()
-		{
-			m_roundCount = 0;
-			m_handCount = 0;
-			//The deck is created and shuffled for computer and human
-			m_deck.GenerateTiles();
+		//Get the text file
+		File file = new File(directory,fileName);
 
-			// Human takes their 28 tiles
-			m_human.Take(m_deck.Deal(m_human.PlayerColor()));
-			// Computer takes their 28 tiles
-			m_computer.Take(m_deck.Deal(m_computer.PlayerColor()));
 
-			// Human Draws 6 and places them on the gameboard
-			m_gameBoard.SetGameBoard(m_human.Draw());
-
-			// Computer draws 6 and places them on the gameboard
-			m_gameBoard.SetGameBoard(m_computer.Draw());
+		// file path hold the path of the game file entered by the user
+		//String filePath = uri.getPath();
+		if (!file.exists()){
+			System.out.println("File not exist");
 		}
 
-		/* *********************************************************************
-		Function Name: StartFromFile
-		Purpose: Sets up all components needed from a past game
-		Parameters: None
-		Return Value: None
-		Algorithm:
-					1) Asks for file path until given a valid file
-					2) Set all values for computer and then human
-					3) Set gameboard stacks at the end to maintain proper order
-						a) The human stacks are first in the Vector
-					4) Determine the hand number within the round
-						based on the amount of tiles in the boneyard
-					4) Display the gameboard to the user
-		Assistance Received: none
-		********************************************************************* */
-		public void StartFromFile(Uri uri)
+
+		// Stores the current line the file is on
+		String line;
+
+		// score, holds the player score given from the file
+		int score;
+
+		// rounds, holds the player rounds won given from the file
+		int rounds;
+
+		// compStacks, holds the computers stack for the gameboard
+		Vector<Tile> compStacks = new Vector<Tile>();
+
+		// humanStacks, holds the humans stack for the gameboard
+		Vector<Tile> humanStacks = new Vector<Tile>();
+
+
+		Scanner fileScanner;
+
+		try
 		{
-			// Get a content resolver to open the input stream
-			String directory = "/mnt/sdcard/Download";
-			String fileName ="";
-			int filePos = uri.getPath().lastIndexOf('/');
-			if (filePos != -1) {
-				fileName = uri.getPath().substring(filePos + 1);
-			}
-
-			//Get the text file
-			File file = new File(directory,fileName);
-
-
-			// file path hold the path of the game file entered by the user
-			//String filePath = uri.getPath();
-			if (!file.exists()){
-				System.out.println("File not exist");
-			}
-
-
-
-			// File found, tells the user that the game is being loaded in
-			m_msg.LoadGame();
-
-			// Stores the current line the file is on
-			String line;
-
-			// score, holds the player score given from the file
-			int score;
-
-			// rounds, holds the player rounds won given from the file
-			int rounds;
-
-			// compStacks, holds the computers stack for the gameboard
-			Vector<Tile> compStacks = new Vector<Tile>();
-
-			// humanStacks, holds the humans stack for the gameboard
-			Vector<Tile> humanStacks = new Vector<Tile>();
-			
-			
-			Scanner fileScanner;
-			
-			try 
+			fileScanner = new Scanner(file);
+			if (fileScanner.hasNext())
 			{
-				fileScanner = new Scanner(file);
-				if (fileScanner.hasNext())
+				line = fileScanner.nextLine();
+				if (line.equals("Computer:"))
 				{
-					line = fileScanner.nextLine();
-					if (line.equals("Computer:"))
+					line = fileScanner.next();
+					//line = line.replace("\\s", "");
+					if (line.equals("Stacks:"))
+					{
+						line = fileScanner.nextLine();
+						if (!line.equals(" "))
+						{
+							compStacks = m_computer.SetStacks(line);
+						}
+					}
+
+					line = fileScanner.next();
+
+					if (line.equals("Boneyard:"))
+					{
+						line = fileScanner.nextLine();
+						if (!line.equals(" "))
+						{
+							m_computer.SetBoneyard(line);
+						}
+					}
+
+					line = fileScanner.next();
+					if (line.equals("Hand:"))
+					{
+						line = fileScanner.nextLine();
+						if (!line.equals(" "))
+						{
+							m_computer.SetHand(line);
+						}
+					}
+
+					line = fileScanner.next();
+					if (line.equals("Score:"))
 					{
 						line = fileScanner.next();
-						//line = line.replace("\\s", "");
-	                    if (line.equals("Stacks:")) 
-	                    {
-	                        line = fileScanner.nextLine();
-	                        if (!line.equals(" ")) 
-	                        {
-	                            compStacks = m_computer.SetStacks(line);
-	                        }
-	                    }
-	                    
-	                    line = fileScanner.next();
-	                    
-	                    if (line.equals("Boneyard:")) 
-	                    {
-	                        line = fileScanner.nextLine();
-	                        if (!line.equals(" ")) 
-	                        {
-	                            m_computer.SetBoneyard(line);
-	                        }
-	                    }
-	                    
-	                    line = fileScanner.next();
-	                    if (line.equals("Hand:")) 
-	                    {
-	                        line = fileScanner.nextLine();
-	                        if (!line.equals(" ")) 
-	                        {
-	                            m_computer.SetHand(line);
-	                        }
-	                    }
-	                    
-	                    line = fileScanner.next();
-	                    if (line.equals("Score:")) 
-	                    {
-	                    	line = fileScanner.next();
-	                        score = Integer.parseInt(line);
-	                        m_computer.PointReset();
-	                        m_computer.SetPoints(score);
-	                    }
-	                    
-	                    line = fileScanner.nextLine();
-	                    line = fileScanner.next();
-	                    
-	                    if (line.equals("Rounds")) 
-	                    {
-	                    	line = fileScanner.next();
-	                    	line = fileScanner.next();
-	                        rounds = Integer.parseInt(line);
-	                        m_computer.SetRoundsWon((short)rounds);
-	                    }
-	                    
-	                    line = fileScanner.next();
-	                   
-	                }
-	                if (line.equals("Human:")) 
-	                {
-	                    line = fileScanner.next();
-	                    if (line.equals("Stacks:")) 
-	                    {
-	                        line = fileScanner.nextLine();
-	                        if (!line.equals(" ")) 
-	                        {
-	                            humanStacks = m_human.SetStacks(line);
-	                        }
-	                    }
-	                    
-	                    line = fileScanner.next();
-	                    if (line.equals("Boneyard:")) 
-	                    {
-	                        line = fileScanner.nextLine();
-	                        if (!line.equals(" ")) {
-	                            m_human.SetBoneyard(line);
-	                        }
-	                    }
-	                    
-	                    line = fileScanner.next();
-	                    if (line.equals("Hand:")) 
-	                    {
-	                        line = fileScanner.nextLine();
-	                        if (!line.equals(" ")) 
-	                        {
-	                            m_human.SetHand(line);
-	                        }
-	                    }
-	                    
-	                    line = fileScanner.next();
-	                    if (line.equals("Score:")) 
-	                    {
-	                    	line = fileScanner.next();
-	                        score = Integer.parseInt(line);
-	                        m_human.PointReset();
-	                        m_human.SetPoints(score);
-	                    }
-	                    
-	                    line = fileScanner.nextLine();
-	                    line = fileScanner.next();
-	                    if (line.equals("Rounds")) 
-	                    {
-	                    	line = fileScanner.next();
-	                    	line = fileScanner.next();
-	                        rounds = Integer.parseInt(line);
-	                        m_human.SetRoundsWon((short)rounds);
-	                    }
-	                }
-	                
-	                line = fileScanner.next();
-	                if (line.equals("Turn:")) 
-	                {
-	                	if (fileScanner.hasNextLine())
-	                	{
-	                		
-	                		line = fileScanner.nextLine();
-	                		if (line.equals(" Computer") || line.equals("Computer"))
-	                		{
-	                			m_computer.SetTurn();
-	                			m_human.EndTurn();
-	                			System.out.print("\n\nComputer Will Go First\n\n");
-	                		}
-	                		else if (line.equals("Human") || line.equals(" Human"))
-	                		{
-	                			m_human.SetTurn();
-	                			m_computer.EndTurn();
-	                			System.out.print("\n\nHuman Will Go First\n\n");
-	                		}
-	                	}
-	                    
-	                }
-	                fileScanner.close();
-				} 
-				
-			} catch(FileNotFoundException e)
-			{
-				System.out.print("Error Reading File - Round.java");
-			}
-		
-
-			// Based on the boneyard size, determine which hand the game is on
-			int bySize = m_human.GetBoneYard().size();
-			switch (bySize)
-			{
-				case 22: 
-					m_handCount = 0;
-					break;
-				case 16:
-					m_handCount = 1;
-					break;
-				case 10:
-					m_handCount = 2;
-					break;
-				case 4:
-					if (m_human.GetHand().isEmpty() && m_computer.GetHand().isEmpty())
-					{
-						m_handCount = 3;
+						score = Integer.parseInt(line);
+						m_computer.PointReset();
+						m_computer.SetPoints(score);
 					}
-					else
+
+					line = fileScanner.nextLine();
+					line = fileScanner.next();
+
+					if (line.equals("Rounds"))
 					{
-						m_handCount = 2;
+						line = fileScanner.next();
+						line = fileScanner.next();
+						rounds = Integer.parseInt(line);
+						m_computer.SetRoundsWon((short)rounds);
 					}
-					break;
-				default:
-					m_handCount = 3;
-					break;
-				
-			}
 
-			//Comp Gameboard after human gameboard
-			m_gameBoard.SetGameBoard(humanStacks);
-			m_gameBoard.SetGameBoard(compStacks);
-			
-		}
+					line = fileScanner.next();
 
-		/* *********************************************************************
-		Function Name: TileCompare
-		Purpose: To figure out who goes first each hand
-		Parameters: 
-					a_human, the tile the human first drew
-					a_computer, the tile the computer first drew
-		Return Value: 
-				returns an int that refers to whose turn it will be
-		Algorithm:
-					1) Checks which player has the larger tile
-						and sets them to start first
-						a) If the same, 3 is retuned which will indicate
-							the need to repeat the process
-		Assistance Received: none
-		********************************************************************* */
-		public int TileCompare(Tile a_human, Tile a_computer)
-		{
-			// If Human tile is larger than computer tile, return 1
-			if (a_human.getTotalPips() > a_computer.getTotalPips())
-			{
-				SetPlayerTurn(m_human);
-				m_computer.EndTurn();
-				return 1;
-			}
-			// Computer tile is larger, return 2
-			else if (a_human.getTotalPips() < a_computer.getTotalPips())
-			{
-				SetPlayerTurn(m_computer);
-				m_human.EndTurn();
-				return 2;
-			}
-			// If tiles are same value then redraw initial tile
-			else
-			{
-				return 3;
-			}
-
-		}
-
-		/* *********************************************************************
-		Function Name: IsPlaceableTiles
-		Purpose: To determine if a players tiles can be placed on the board
-		Parameters:
-					a_playerTiles, a Vector of tiles that represents a players
-					hand
-		Return Value:
-				returns a bool. 
-				If true, means they have a tile that can be placed. 
-				If false, they have no tiles in their hand that can be
-				placed anywhere on the board
-		Algorithm:
-					1) Loops through the entire board and checks if
-						each tile matches the required criteria to be placed
-		Assistance Received: none
-		********************************************************************* */
-		public boolean IsPlaceableTiles(Vector<Tile> a_playerTiles)
-		{
-			Vector<Tile> board = m_gameBoard.GetDominoStack();
-
-			//Check first players tiles
-			for (int i = 0; i < board.size(); i++)
-			{
-				for (int j = 0; j < a_playerTiles.size(); j++)
+				}
+				if (line.equals("Human:"))
 				{
-					//Tile total pips larger than on board
-					if (a_playerTiles.get(j).getTotalPips() >= board.get(i).getTotalPips())
+					line = fileScanner.next();
+					if (line.equals("Stacks:"))
+					{
+						line = fileScanner.nextLine();
+						if (!line.equals(" "))
+						{
+							humanStacks = m_human.SetStacks(line);
+						}
+					}
+
+					line = fileScanner.next();
+					if (line.equals("Boneyard:"))
+					{
+						line = fileScanner.nextLine();
+						if (!line.equals(" ")) {
+							m_human.SetBoneyard(line);
+						}
+					}
+
+					line = fileScanner.next();
+					if (line.equals("Hand:"))
+					{
+						line = fileScanner.nextLine();
+						if (!line.equals(" "))
+						{
+							m_human.SetHand(line);
+						}
+					}
+
+					line = fileScanner.next();
+					if (line.equals("Score:"))
+					{
+						line = fileScanner.next();
+						score = Integer.parseInt(line);
+						m_human.PointReset();
+						m_human.SetPoints(score);
+					}
+
+					line = fileScanner.nextLine();
+					line = fileScanner.next();
+					if (line.equals("Rounds"))
+					{
+						line = fileScanner.next();
+						line = fileScanner.next();
+						rounds = Integer.parseInt(line);
+						m_human.SetRoundsWon((short)rounds);
+					}
+				}
+
+				line = fileScanner.next();
+				if (line.equals("Turn:"))
+				{
+					if (fileScanner.hasNextLine())
+					{
+
+						line = fileScanner.nextLine();
+						if (line.equals(" Computer") || line.equals("Computer"))
+						{
+							m_computer.SetTurn();
+							m_human.EndTurn();
+							System.out.print("\n\nComputer Will Go First\n\n");
+						}
+						else if (line.equals("Human") || line.equals(" Human"))
+						{
+							m_human.SetTurn();
+							m_computer.EndTurn();
+							System.out.print("\n\nHuman Will Go First\n\n");
+						}
+					}
+
+				}
+				fileScanner.close();
+			}
+
+		} catch(FileNotFoundException e)
+		{
+			System.out.print("Error Reading File - Round.java");
+		}
+
+		// Based on the boneyard size, determine which hand the game is on
+		int bySize = m_human.GetBoneYard().size();
+		switch (bySize)
+		{
+			case 22:
+				m_handCount = 0;
+				break;
+			case 16:
+				m_handCount = 1;
+				break;
+			case 10:
+				m_handCount = 2;
+				break;
+			case 4:
+				// Check if the hands are empty first to make sure no placeable tiles are left
+				if (m_human.GetHand().isEmpty() && m_computer.GetHand().isEmpty())
+				{
+					m_handCount = 3;
+				}
+				else
+				{
+					m_handCount = 2;
+				}
+				break;
+			default:
+				m_handCount = 3;
+				break;
+		}
+
+		//Comp Gameboard after human gameboard
+		m_gameBoard.SetGameBoard(humanStacks);
+		m_gameBoard.SetGameBoard(compStacks);
+	}
+
+	/**
+	 * To figure out who goes first each hand
+	 * @param a_human Tile the human first drew
+	 * @param a_computer Tile the computer first drew
+	 * @return int that refers to whose turn it will be
+	 */
+	public int TileCompare(Tile a_human, Tile a_computer)
+	{
+		// If Human tile is larger than computer tile, return 1
+		if (a_human.getTotalPips() > a_computer.getTotalPips())
+		{
+			SetPlayerTurn(m_human);
+			m_computer.EndTurn();
+			return 1;
+		}
+		// Computer tile is larger, return 2
+		else if (a_human.getTotalPips() < a_computer.getTotalPips())
+		{
+			SetPlayerTurn(m_computer);
+			m_human.EndTurn();
+			return 2;
+		}
+		// If tiles are same value then redraw initial tile
+		else
+		{
+			return 3;
+		}
+
+	}
+
+	/**
+	 * To determine if a players tiles can be placed on the board
+	 * @param a_playerTiles Vector of tiles that represents a players hand
+	 * @return boolean true if placeable tile, else false
+	 */
+	public boolean IsPlaceableTiles(Vector<Tile> a_playerTiles)
+	{
+		Vector<Tile> board = m_gameBoard.GetDominoStack();
+
+		//Check first players tiles
+		for (int i = 0; i < board.size(); i++)
+		{
+			for (int j = 0; j < a_playerTiles.size(); j++)
+			{
+				//Tile total pips larger than on board
+				if (a_playerTiles.get(j).getTotalPips() >= board.get(i).getTotalPips())
+				{
+					return true;
+				}
+				//If a double tile, it can be placed anywhere unless the stack is a double tile greater to the one in hand
+				else if (a_playerTiles.get(j).getLeftPips() == a_playerTiles.get(j).getRightPips())
+				{
+					if (board.get(i).getLeftPips() != board.get(i).getRightPips())
 					{
 						return true;
 					}
-					//If a double tile, it can be placed anywhere unless the stack is a double tile greater to the one in hand
-					else if (a_playerTiles.get(j).getLeftPips() == a_playerTiles.get(j).getRightPips())
+					else if ((board.get(i).getLeftPips() == board.get(i).getRightPips()) && (a_playerTiles.get(j).getTotalPips() > board.get(i).getTotalPips()))
 					{
-						if (board.get(i).getLeftPips() != board.get(i).getRightPips())
-						{
-							return true;
-						}
-						else if ((board.get(i).getLeftPips() == board.get(i).getRightPips()) && (a_playerTiles.get(j).getTotalPips() > board.get(i).getTotalPips()))
-						{
-							return true;
-						}
+						return true;
 					}
 				}
 			}
-
-			return false;
 		}
 
-		/* *********************************************************************
-		Function Name: SaveGame
-		Purpose: Stores all current player data to a file
-		Parameters: None
-		Return Value: None
-		Algorithm:
-					1) Asks for a name to give the file and creates a new file
-						of that given name
-					2) Pulls in all data required for the computer
-					3) Pulls in all data required for the human
-					4) Sets both rounds, score, and finally the player
-						whose turn will be next
-		Assistance Received: 	
-					https://stackoverflow.com/questions/5252612/replace-space-with-an-underscore
-					https://www.educative.io/answers/how-to-get-the-current-date-and-time-in-cpp
-					https://stackoverflow.com/questions/30120813/how-do-i-provide-a-file-path-in-mac-os-x-while-creating-a-file-in-java
-		********************************************************************* */
-		public void SaveGame()
+		return false;
+	}
+
+	/**
+	 * Stores all current player data to a file
+	 */
+	public void SaveGame()
+	{
+
+		String directory = "/mnt/sdcard/Download/";
+		String fileName ="Test";
+
+		Vector<Tile> temp;
+		System.out.print("\n\nEnter file name to save - Do not include extension\n");
+		// Create File Name With Data and txt File Extension
+
+
+
+		fileName = directory +  fileName + ".txt";
+		File saveFile = new File(fileName);
+
+		System.out.print("\n\nSaving Game to: " + fileName);
+		// Create New File
+		try {
+			saveFile.createNewFile();
+			FileWriter file = new FileWriter(saveFile);
+
+			// SAVE ALL COMPUTER DATA
+			file.write("Computer:\n");
+
+			// Write Computer Stack To File
+			temp = m_gameBoard.GetDominoStack();
+			file.write("\tStacks: ");
+			for (int i = 6; i < temp.size(); i++) {
+				file.write(temp.get(i).getColor());
+				file.write(Integer.toString(temp.get(i).getLeftPips()));
+				file.write(temp.get(i).getRightPips() + " ");
+			}
+
+			// Write Boneyard to file
+			temp = m_computer.GetBoneYard();
+			file.write("\n\tBoneyard: ");
+			for (int i = 0; i < temp.size(); i++) {
+				file.write(temp.get(i).getColor());
+				file.write(Integer.toString(temp.get(i).getLeftPips()));
+				file.write(temp.get(i).getRightPips() + " ");
+			}
+
+			// Write Hand to file
+			temp = m_computer.GetHand();
+			file.write("\n\tHand: ");
+			for (int i = 0; i < temp.size(); i++) {
+				file.write(temp.get(i).getColor());
+				file.write(Integer.toString(temp.get(i).getLeftPips()));
+				file.write(temp.get(i).getRightPips() + " ");
+			}
+
+			// Write Score
+			file.write("\n\tScore: " + m_computer.GetPoints());
+
+			// Write Rounds Won
+			file.write("\n\tRounds Won: " + m_computer.GetRoundsWon());
+
+			// SAVE ALL HUMAN DATA
+			file.write("\n\nHuman:\n");
+
+			// Write Computer Stack To File
+			temp = m_gameBoard.GetDominoStack();
+			file.write("\tStacks: ");
+			for (int i = 0; i < temp.size() - 6; i++) {
+				file.write(temp.get(i).getColor());
+				file.write(Integer.toString(temp.get(i).getLeftPips()));
+				file.write(temp.get(i).getRightPips() + " ");
+			}
+
+			// Write Boneyard to file
+			temp = m_human.GetBoneYard();
+			file.write("\n\tBoneyard: ");
+			for (int i = 0; i < temp.size(); i++)
+			{
+				file.write(temp.get(i).getColor());
+				file.write(Integer.toString(temp.get(i).getLeftPips()));
+				file.write(temp.get(i).getRightPips() + " ");
+			}
+
+			// Write Hand to file
+			temp = m_human.GetHand();
+			file.write("\n\tHand: ");
+			for (int i = 0; i < temp.size(); i++)
+			{
+				file.write(temp.get(i).getColor());
+				file.write(Integer.toString(temp.get(i).getLeftPips()));
+				file.write(temp.get(i).getRightPips()+ " ");
+			}
+
+
+			// Write Score
+			file.write("\n\tScore: " + m_human.GetPoints());
+
+			// Write Rounds Won
+			file.write("\n\tRounds Won: " + m_human.GetRoundsWon());
+
+
+			// Write Turn
+			if (m_computer.IsMyTurn())
+			{
+				file.write("\n\nTurn: Computer");
+			}
+			else if (m_human.IsMyTurn())
+			{
+				file.write("\n\nTurn: Human");
+			}
+
+			file.close();
+
+		} catch (Exception e)
 		{
-
-			String directory = "/mnt/sdcard/Download/";
-			String fileName ="Test";
-
-			Vector<Tile> temp;
-		    System.out.print("\n\nEnter file name to save - Do not include extension\n");
-		    // Create File Name With Data and txt File Extension
-
-		    
-		    
-		    fileName = directory +  fileName + ".txt";
-		    File saveFile = new File(fileName);
-		    
-		    System.out.print("\n\nSaving Game to: " + fileName);
-		    // Create New File
-		    try {
-		    	saveFile.createNewFile();
-		        FileWriter file = new FileWriter(saveFile);
-
-		        // SAVE ALL COMPUTER DATA
-		        file.write("Computer:\n");
-
-		        // Write Computer Stack To File
-		        temp = m_gameBoard.GetDominoStack();
-		        file.write("\tStacks: ");
-		        for (int i = 6; i < temp.size(); i++) {
-		            file.write(temp.get(i).getColor());
-		            file.write(Integer.toString(temp.get(i).getLeftPips()));
-		            file.write(temp.get(i).getRightPips() + " ");
-		        }
-
-		        // Write Boneyard to file
-		        temp = m_computer.GetBoneYard();
-		        file.write("\n\tBoneyard: ");
-		        for (int i = 0; i < temp.size(); i++) {
-		            file.write(temp.get(i).getColor());
-		            file.write(Integer.toString(temp.get(i).getLeftPips()));
-		            file.write(temp.get(i).getRightPips() + " ");
-		        }
-
-		        // Write Hand to file
-		        temp = m_computer.GetHand();
-		        file.write("\n\tHand: ");
-		        for (int i = 0; i < temp.size(); i++) {
-		            file.write(temp.get(i).getColor());
-		            file.write(Integer.toString(temp.get(i).getLeftPips()));
-		            file.write(temp.get(i).getRightPips() + " ");
-		        }
-
-		        // Write Score
-		        file.write("\n\tScore: " + m_computer.GetPoints());
-
-		        // Write Rounds Won
-		        file.write("\n\tRounds Won: " + m_computer.GetRoundsWon());
-
-		        // SAVE ALL HUMAN DATA
-		        file.write("\n\nHuman:\n");
-
-		        // Write Computer Stack To File
-		        temp = m_gameBoard.GetDominoStack();
-		        file.write("\tStacks: ");
-		        for (int i = 0; i < temp.size() - 6; i++) {
-		            file.write(temp.get(i).getColor());
-		            file.write(Integer.toString(temp.get(i).getLeftPips()));
-		            file.write(temp.get(i).getRightPips() + " ");
-		        }
-
-		        // Write Boneyard to file
-		        temp = m_human.GetBoneYard();
-		        file.write("\n\tBoneyard: ");
-		        for (int i = 0; i < temp.size(); i++) 
-		        {
-		            file.write(temp.get(i).getColor());
-		            file.write(Integer.toString(temp.get(i).getLeftPips()));
-		            file.write(temp.get(i).getRightPips() + " ");
-		        }
-
-		        // Write Hand to file
-		        temp = m_human.GetHand();
-		        file.write("\n\tHand: ");
-		        for (int i = 0; i < temp.size(); i++) 
-		        {
-		            file.write(temp.get(i).getColor());
-		            file.write(Integer.toString(temp.get(i).getLeftPips()));
-		            file.write(temp.get(i).getRightPips()+ " ");
-		        }
-		        
-
-		        // Write Score
-		        file.write("\n\tScore: " + m_human.GetPoints());
-
-		        // Write Rounds Won
-		        file.write("\n\tRounds Won: " + m_human.GetRoundsWon());
-		        
-		        
-		        // Write Turn
-		        if (m_computer.IsMyTurn())
-		        {
-		        	file.write("\n\nTurn: Computer");
-		        }
-		        else if (m_human.IsMyTurn())
-		        {
-		        	file.write("\n\nTurn: Human");
-		        }
-		        
-		        file.close();
-		        
-		    }catch (Exception e)
-		    {
-		    	System.out.print(e);
-		    }
-
-		    System.exit(0);
+			System.out.print(e);
 		}
-		
-	
+
+		System.exit(0);
+	}
 }
